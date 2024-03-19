@@ -1,5 +1,6 @@
 package com.back.wdam.entity;
 
+import com.back.wdam.module.dto.BehaviorDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,12 +17,12 @@ import java.time.LocalDateTime;
 
 public class UnitBehavior {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "behaviorIdx")
     private Long behaviorIdx;
 
-    @ManyToOne
-    @JoinColumn(name = "unitId")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "unitId", referencedColumnName = "unitId") // unitId를 외래 키로 사용
     private UnitInit unitInit;
 
     private Integer simulationTime;
@@ -32,6 +33,17 @@ public class UnitBehavior {
 
     @CreationTimestamp
     @Column(name = "createdAt", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
+    private LocalDateTime createdAt = LocalDateTime.now();
 
+    public UnitBehavior(UnitInit unitInit, BehaviorDto behaviorDto){
+        this.unitInit = unitInit;
+        this.simulationTime = behaviorDto.getSimulationTime();
+        this.behaviorName = behaviorDto.getBehaviorName();
+        this.status = behaviorDto.getStatus();
+    }
+
+    public UnitBehavior() {
+
+    }
 }
+

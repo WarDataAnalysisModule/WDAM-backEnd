@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/com.back.wdam.main.iml" filepath="$PROJECT_DIR$/.idea/modules/com.back.wdam.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/wdam.iml" filepath="$PROJECT_DIR$/.idea/wdam.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/wdam.wdam.main.iml" filepath="$PROJECT_DIR$/.idea/modules/wdam.wdam.main.iml" />
     </modules>
   </component>
 </project>

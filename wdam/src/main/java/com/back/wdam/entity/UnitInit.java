@@ -13,12 +13,11 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @ToString
-@Table(name = "UnitInit")
 
 public class UnitInit {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "initIdx")
     private Long initIdx;
 
@@ -36,8 +35,8 @@ public class UnitInit {
 
     private String supply;
 
-    @CreationTimestamp
+    @CreationTimestamp // INSERT 시 자동으로 값을 채워줌
     @Column(name = "createdAt", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
+    private LocalDateTime createdAt = LocalDateTime.now();
 
 }
