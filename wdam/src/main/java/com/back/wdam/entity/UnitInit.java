@@ -1,5 +1,6 @@
 package com.back.wdam.entity;
 
+import com.back.wdam.module.dto.InitDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,7 +22,9 @@ public class UnitInit {
     @Column(name = "initIdx")
     private Long initIdx;
 
-    private Integer unitId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "unitId", referencedColumnName = "unitId") // unitId를 외래 키로 사용
+    private UnitList unitList;
 
     private  String unitName;
 
@@ -35,8 +38,15 @@ public class UnitInit {
 
     private String supply;
 
-    @CreationTimestamp // INSERT 시 자동으로 값을 채워줌
-    @Column(name = "createdAt", nullable = false, updatable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime createdAt;
 
+    public UnitInit(UnitList newUnit, InitDto initDto) {
+        this.unitList = newUnit;
+        this.unitName = initDto.getUnitName();
+        this.status = initDto.getStatus();
+        this.member = initDto.getMember();
+        this.equipment = initDto.getEquipment();
+        this.supply = initDto.getSupply();
+        this.createdAt = getCreatedAt();
+    }
 }
