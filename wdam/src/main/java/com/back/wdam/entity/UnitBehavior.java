@@ -23,23 +23,22 @@ public class UnitBehavior {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "unitId", referencedColumnName = "unitId") // unitId를 외래 키로 사용
-    private UnitInit unitInit;
+    private UnitList unitList;
 
-    private Integer simulationTime;
+    private Long simulationTime;
 
     private String behaviorName;
 
     private String status;
 
-    @CreationTimestamp
-    @Column(name = "createdAt", nullable = false, updatable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime createdAt;
 
-    public UnitBehavior(UnitInit unitInit, BehaviorDto behaviorDto){
-        this.unitInit = unitInit;
+    public UnitBehavior(UnitList unitList, BehaviorDto behaviorDto){
+        this.unitList = unitList;
         this.simulationTime = behaviorDto.getSimulationTime();
         this.behaviorName = behaviorDto.getBehaviorName();
         this.status = behaviorDto.getStatus();
+        this.createdAt = behaviorDto.getCreatedAt();
     }
 
     public UnitBehavior() {
