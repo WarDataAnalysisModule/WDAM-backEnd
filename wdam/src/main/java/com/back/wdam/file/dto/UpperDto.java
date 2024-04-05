@@ -1,4 +1,4 @@
-package com.back.wdam.module.dto;
+package com.back.wdam.file.dto;
 
 import lombok.Getter;
 import lombok.Setter;

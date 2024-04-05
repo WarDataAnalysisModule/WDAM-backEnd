@@ -1,4 +1,4 @@
-package com.back.wdam.module.repository;
+package com.back.wdam.file.repository;
 
 import com.back.wdam.entity.UpperAttributes;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,11 +1,10 @@
 package com.back.wdam.entity;
 
-import com.back.wdam.module.dto.BehaviorDto;
+import com.back.wdam.file.dto.BehaviorDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -21,8 +20,8 @@ public class UnitBehavior {
     @Column(name = "behaviorIdx")
     private Long behaviorIdx;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "unitId", referencedColumnName = "unitId") // unitId를 외래 키로 사용
+    @ManyToOne
+    @JoinColumn(name = "listIdx")
     private UnitList unitList;
 
     private Long simulationTime;
