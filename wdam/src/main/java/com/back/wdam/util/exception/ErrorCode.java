@@ -9,11 +9,11 @@ import org.springframework.http.HttpStatus;
 public enum ErrorCode {
 
     //behavior 파일이 없을 경우
-    BEHAVIOR_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "behaivor 파일을 업로드 해주세요.");
+    BEHAVIOR_NOT_FOUND(HttpStatus.NOT_FOUND, "404"),
+    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "404");;
 
 
 
     private final HttpStatus status;
     private final String code;
-    private final String message;
 }

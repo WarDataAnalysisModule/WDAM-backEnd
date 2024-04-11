@@ -12,13 +12,11 @@ import lombok.ToString;
 public class ErrorResponse<T> {
 
     private String code;
-    private String message;
     private T data;
 
     @Builder
-    public ErrorResponse(String code, String message) {
+    public ErrorResponse(String code) {
         this.code = code;
-        this.message = message;
         this.data = null;
     }
 }

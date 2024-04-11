@@ -86,7 +86,7 @@ public class FileService {
 
     public void behaviorSave(Long id, BehaviorDto behaviorDto){
         Optional<UnitList> unitList = unitListRepository.findByUnitId(id);
-        if(unitList.isEmpty()){
+        /*if(unitList.isEmpty()){
             UnitList newUnit = new UnitList();
             newUnit.setUnitId(id);
             newUnit.setStatus(UpperUnit.UNIT);
@@ -96,14 +96,15 @@ public class FileService {
         }
         else{
             behaviorRepository.saveAndFlush(new UnitBehavior(unitList.get(), behaviorDto));
-        }
+        }*/
+        behaviorRepository.saveAndFlush(new UnitBehavior(unitList.get(), behaviorDto));
     }
 
     public void eventSave(Long source, Long target, EventDto eventDto){
         Optional<UnitList> sourceUnit = unitListRepository.findByUnitId(source);
         Optional<UnitList> targetUnit = unitListRepository.findByUnitId(target);
 
-        if(sourceUnit.isEmpty()){
+        /*if(sourceUnit.isEmpty()){
             UnitList newUnit = new UnitList();
             newUnit.setUnitId(source);
             newUnit.setStatus(UpperUnit.UNIT);
@@ -119,7 +120,7 @@ public class FileService {
             unitListRepository.saveAndFlush(newUnit);
 
             targetUnit = unitListRepository.findByUnitId(target);
-        }
+        }*/
 
         eventRepository.saveAndFlush(new Event(sourceUnit.get(), targetUnit.get(), eventDto));
 

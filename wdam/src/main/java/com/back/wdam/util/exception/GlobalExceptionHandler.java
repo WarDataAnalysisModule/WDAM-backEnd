@@ -12,7 +12,6 @@ public class GlobalExceptionHandler {
 
         ErrorResponse errorResponse = ErrorResponse.builder()
                 .code(e.getCode().getCode())
-                .message(e.getMessage())
                 .build();
         return ResponseEntity.status(e.getCode().getStatus())
                 .body(errorResponse);
