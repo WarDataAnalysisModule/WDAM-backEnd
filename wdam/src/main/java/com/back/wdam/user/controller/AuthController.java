@@ -1,7 +1,7 @@
 package com.back.wdam.user.controller;
 
-import com.back.wdam.user.dto.MemberRequestDto;
-import com.back.wdam.user.dto.MemberResponseDto;
+import com.back.wdam.user.dto.UserRequestDto;
+import com.back.wdam.user.dto.UserResponseDto;
 import com.back.wdam.user.dto.TokenDto;
 import com.back.wdam.user.service.AuthService;
 import lombok.RequiredArgsConstructor;
@@ -18,13 +18,13 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/signup")
-    public ResponseEntity<MemberResponseDto> signup(@RequestBody MemberRequestDto memberRequestDto) {
-        return ResponseEntity.ok(authService.signup(memberRequestDto));
+    public ResponseEntity<UserResponseDto> signup(@RequestBody UserRequestDto userRequestDto) {
+        return ResponseEntity.ok(authService.signup(userRequestDto));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<TokenDto> login(@RequestBody MemberRequestDto memberRequestDto) {
-        return ResponseEntity.ok(authService.login(memberRequestDto));
+    public ResponseEntity<TokenDto> login(@RequestBody UserRequestDto userRequestDto) {
+        return ResponseEntity.ok(authService.login(userRequestDto));
     }
 
 //    @PostMapping("/reissue")

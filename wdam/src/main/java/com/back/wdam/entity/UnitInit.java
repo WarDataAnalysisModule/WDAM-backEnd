@@ -1,12 +1,10 @@
 package com.back.wdam.entity;
 
-import com.back.wdam.module.dto.InitDto;
+import com.back.wdam.file.dto.InitDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.hibernate.annotations.CreationTimestamp;
-import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
 
@@ -14,16 +12,17 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @ToString
+@Table(name = "unit_init")
 
 public class UnitInit {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "initIdx")
+    @Column(name = "init_idx")
     private Long initIdx;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "unitId", referencedColumnName = "unitId") // unitId를 외래 키로 사용
+    @ManyToOne
+    @JoinColumn(name = "list_idx")
     private UnitList unitList;
 
     private  String unitName;
@@ -48,5 +47,9 @@ public class UnitInit {
         this.equipment = initDto.getEquipment();
         this.supply = initDto.getSupply();
         this.createdAt = getCreatedAt();
+    }
+
+    public UnitInit() {
+
     }
 }

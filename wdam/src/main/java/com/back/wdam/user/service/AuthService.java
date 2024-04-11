@@ -1,14 +1,14 @@
 package com.back.wdam.user.service;
 
-import com.back.wdam.user.dto.MemberRequestDto;
-import com.back.wdam.user.dto.MemberResponseDto;
+import com.back.wdam.entity.RefreshToken;
+import com.back.wdam.entity.Users;
+import com.back.wdam.user.dto.UserRequestDto;
+import com.back.wdam.user.dto.UserResponseDto;
 import com.back.wdam.user.dto.TokenDto;
 import com.back.wdam.user.dto.TokenRequestDto;
-import com.back.wdam.user.entity.Member;
-import com.back.wdam.user.entity.RefreshToken;
 import com.back.wdam.user.jwt.TokenProvider;
-import com.back.wdam.user.repository.MemberRepository;
 import com.back.wdam.user.repository.RefreshTokenRepository;
+import com.back.wdam.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -21,25 +21,25 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class AuthService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
-    private final MemberRepository memberRepository;
+    private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
 
     @Transactional
-    public MemberResponseDto signup(MemberRequestDto memberRequestDto) {
-        if (memberRepository.existsByUsername(memberRequestDto.getUsername())) {
+    public UserResponseDto signup(UserRequestDto userRequestDto) {
+        if (userRepository.existsByUserName(userRequestDto.getUsername())) {
             throw new RuntimeException("이미 가입되어 있는 유저입니다");
         }
 
-        Member member = memberRequestDto.toMember(passwordEncoder);
-        return MemberResponseDto.of(memberRepository.save(member));
+        Users user = userRequestDto.toUser(passwordEncoder);
+        return UserResponseDto.of(userRepository.save(user));
     }
 
     @Transactional
-    public TokenDto login(MemberRequestDto memberRequestDto) {
+    public TokenDto login(UserRequestDto userRequestDto) {
         // 1. Login ID/PW 를 기반으로 AuthenticationToken 생성
-        UsernamePasswordAuthenticationToken authenticationToken = memberRequestDto.toAuthentication();
+        UsernamePasswordAuthenticationToken authenticationToken = userRequestDto.toAuthentication();
 
         // 2. 실제로 검증 (사용자 비밀번호 체크) 이 이루어지는 부분
         //    authenticate 메서드가 실행이 될 때 CustomUserDetailsService 에서 만들었던 loadUserByUsername 메서드가 실행됨
