@@ -3,7 +3,6 @@ package com.back.wdam.user.controller;
 import com.back.wdam.user.dto.MemberRequestDto;
 import com.back.wdam.user.dto.MemberResponseDto;
 import com.back.wdam.user.dto.TokenDto;
-import com.back.wdam.user.dto.TokenRequestDto;
 import com.back.wdam.user.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -28,8 +27,8 @@ public class AuthController {
         return ResponseEntity.ok(authService.login(memberRequestDto));
     }
 
-    @PostMapping("/reissue")
-    public ResponseEntity<TokenDto> reissue(@RequestBody TokenRequestDto tokenRequestDto) {
-        return ResponseEntity.ok(authService.reissue(tokenRequestDto));
-    }
+//    @PostMapping("/reissue")
+//    public ResponseEntity<TokenDto> reissue(@RequestBody TokenRequestDto tokenRequestDto) {
+//        return ResponseEntity.ok(authService.reissue(tokenRequestDto));
+//    }
 }
