@@ -7,6 +7,8 @@ import com.back.wdam.file.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -124,6 +126,15 @@ public class FileService {
 
         eventRepository.saveAndFlush(new Event(sourceUnit.get(), targetUnit.get(), eventDto));
 
+    }
+    public List<UnitListDto> getUnitList(){
+        List<UnitList> unitLists = unitListRepository.findAll();
+        List<UnitListDto> unitListDtos = new ArrayList<>();
+        for(UnitList unitList: unitLists){
+            UnitListDto unitListDto = new UnitListDto(unitList.getListIdx(), unitList.getUnitName());
+            unitListDtos.add(unitListDto);
+        }
+        return unitListDtos;
     }
 
 }

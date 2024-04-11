@@ -1,6 +1,6 @@
 package com.back.wdam.user.service;
 
-import com.back.wdam.entity.User;
+import com.back.wdam.entity.Users;
 import com.back.wdam.user.dto.MypageDto;
 import com.back.wdam.user.repository.UserRepository;
 import com.back.wdam.util.exception.CustomException;
@@ -19,19 +19,19 @@ public class UserService {
 
     public MypageDto getMypage(Long userIdx){
 
-        Optional<User> user = userRepository.findByUserIdx(userIdx);
+        Optional<Users> user = userRepository.findByUserIdx(userIdx);
 
         if(user.isEmpty()){
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
         else{
-            return new MypageDto(user.get().getUserId(), user.get().getPassword(), user.get().getPhone(),
+            return new MypageDto(user.get().getUserName(), user.get().getPassword(), user.get().getPhone(),
                     user.get().getEmail());
         }
     }
 
     public void modifyUser(Long userIdx, MypageDto mypageDto){
-        Optional<User> user = userRepository.findByUserIdx(userIdx);
+        Optional<Users> user = userRepository.findByUserIdx(userIdx);
 
         if(user.isEmpty()){
             throw new CustomException(ErrorCode.USER_NOT_FOUND);

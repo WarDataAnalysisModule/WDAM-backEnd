@@ -12,11 +12,11 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @ToString
-@Table(name = "UnitList")
+@Table(name = "Unit_list")
 public class UnitList {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "listIdx")
+    @Column(name = "list_idx")
     private Long listIdx;
 
     private Long unitId;

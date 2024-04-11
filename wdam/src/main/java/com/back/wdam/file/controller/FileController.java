@@ -33,7 +33,7 @@ public class FileController {
     //상급부대Attributes_#상급부대ID_20230116174254.csv
 
     @PostMapping("/files")
-    public ResponseEntity<ApiResponse> fileSave(@RequestPart(value = "behavior") @Nullable MultipartFile behavior, //behavior 파일
+    public ResponseEntity<ApiResponse<List<UnitListDto>>> fileSave(@RequestPart(value = "behavior") @Nullable MultipartFile behavior, //behavior 파일
                                                 @RequestPart(value = "upper") @Nullable List<MultipartFile> uppers, //상급부대 정보(attributes)
                                                 @RequestPart(value = "unit") @Nullable List<MultipartFile> units, //단위부대 정보(attributes)
                                                 @RequestPart(value = "init") @Nullable MultipartFile init, //단위부대 정보
@@ -352,6 +352,6 @@ public class FileController {
             }
         }
 
-        return ResponseEntity.ok(ApiResponse.success(null));
+        return ResponseEntity.ok(ApiResponse.success(fileService.getUnitList()));
     }
 }

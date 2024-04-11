@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @ToString
-@Table(name = "Event")
+@Table(name = "event")
 public class Event {
 
     @Id
@@ -20,11 +20,11 @@ public class Event {
     private Long eventIdx;
 
     @ManyToOne
-    @JoinColumn(name = "sourceListIdx")
+    @JoinColumn(name = "source_list_idx")
     private UnitList sourceUnit;
 
     @ManyToOne
-    @JoinColumn(name = "targetListIdx")
+    @JoinColumn(name = "target_list_idx")
     private UnitList targetUnit;
 
     private Long simulationTime;

@@ -12,16 +12,16 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @ToString
-@Table(name = "UnitBehavior")
+@Table(name = "unit_behavior")
 
 public class UnitBehavior {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "behaviorIdx")
+    @Column(name = "behavior_idx")
     private Long behaviorIdx;
 
     @ManyToOne
-    @JoinColumn(name = "listIdx")
+    @JoinColumn(name = "list_jdx")
     private UnitList unitList;
 
     private Long simulationTime;

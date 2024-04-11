@@ -1,10 +1,12 @@
 package com.back.wdam.user.controller;
 
 import com.back.wdam.user.dto.MypageDto;
+import com.back.wdam.user.jwt.PrincipalDetails;
 import com.back.wdam.user.service.UserService;
 import com.back.wdam.util.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,17 +21,17 @@ public class UserController {
 
     //마이페이지 조회
     @GetMapping("/users")
-    public ResponseEntity<ApiResponse<MypageDto>> getMypage(Long userIdx){
-        return ResponseEntity.ok(ApiResponse.success(userService.getMypage(userIdx)));
+    public ResponseEntity<ApiResponse<MypageDto>> getMypage(@AuthenticationPrincipal PrincipalDetails principalDetails){
+        return ResponseEntity.ok(ApiResponse.success(userService.getMypage(principalDetails.getUsers().getUserIdx())));
     }
 
     //마이페이지 수정
     @PatchMapping("/users/update")
-    public ResponseEntity<ApiResponse<MypageDto>> modifyUser(Long userIdx, @RequestBody MypageDto mypageDto){
+    public ResponseEntity<ApiResponse<MypageDto>> modifyUser(@AuthenticationPrincipal PrincipalDetails principalDetails, @RequestBody MypageDto mypageDto){
 
-        userService.modifyUser(1L, mypageDto);
+        userService.modifyUser(principalDetails.getUsers().getUserIdx(), mypageDto);
 
-        return ResponseEntity.ok(ApiResponse.success(userService.getMypage(1L)));
+        return ResponseEntity.ok(ApiResponse.success(userService.getMypage(principalDetails.getUsers().getUserIdx())));
     }
 
     //로그아웃

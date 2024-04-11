@@ -12,15 +12,15 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @ToString
-@Table(name = "UpperAttributes")
+@Table(name = "upper_attributes")
 public class UpperAttributes {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "upperIdx")
+    @Column(name = "upper_idx")
     private Long upperIdx;
 
     @ManyToOne
-    @JoinColumn(name = "listIdx")
+    @JoinColumn(name = "list_idx")
     private UnitList unitList;
 
     private Long simulationTime;

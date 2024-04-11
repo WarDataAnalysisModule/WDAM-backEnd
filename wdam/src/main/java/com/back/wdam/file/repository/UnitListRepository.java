@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 @Transactional
@@ -17,4 +18,6 @@ public interface UnitListRepository extends JpaRepository<UnitList, Long> {
     @Query("update UnitList u set u.unitName = :unitName, u.status = :status where u.unitId = :unitId")
     void updateByUnitId(@Param("unitName") String unitName, @Param("status") String status, @Param("unitId") Long unitId);
 
+    @Query("SELECT u FROM UnitList u")
+    List<UnitList> findAll();
 }
