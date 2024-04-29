@@ -1,9 +1,9 @@
 package com.back.wdam.user.dto;
 
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.*;
 
+// 로그인 시 사용하는 정보
 @Getter
 @Setter
 @Builder
@@ -12,10 +12,8 @@ import lombok.*;
 public class LoginDto {
 
     @NotNull
-    @Size(min = 3, max = 50)
-    private String username;
+    private String userName;
 
     @NotNull
-    @Size(min = 3, max = 100)
     private String password;
 }
