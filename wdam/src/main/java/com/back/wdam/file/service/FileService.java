@@ -123,7 +123,6 @@ public class FileService {
 
             targetUnit = unitListRepository.findByUnitId(target);
         }*/
-
         eventRepository.saveAndFlush(new Event(sourceUnit.get(), targetUnit.get(), eventDto));
 
     }

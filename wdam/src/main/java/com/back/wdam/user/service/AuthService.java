@@ -105,5 +105,21 @@ public class AuthService {
         return tokenDto;
     }
 
+    @Transactional
+    public void logout(TokenRequestDto logout){
+        //1. Access Tocken 검증
+        if(!tokenProvider.validateToken(logout.getAccessToken())){
+            throw new RuntimeException("Access Token 이 유효하지 않습니다.");
+        }
 
+        //2. Access Token에서 userName(id)을 가져옴
+        Authentication authentication = tokenProvider.getAuthentication(logout.getAccessToken());
+
+        //3. DB에서 해당 refresh token 삭제
+        RefreshToken refreshToken = refreshTokenRepository.findByKey(authentication.getName())
+                .orElseThrow(() -> new RuntimeException("이미 로그아웃 된 사용자입니다."));
+
+        refreshTokenRepository.delete(refreshToken);
+
+    }
 }

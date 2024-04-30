@@ -61,13 +61,16 @@ public class SecurityConfig {
                         // 인증(토큰) 없이 접속 가능한 api
                         .requestMatchers(new AntPathRequestMatcher("/users/signup")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/users/login")).permitAll()
-                        .requestMatchers(new AntPathRequestMatcher("/")).permitAll()
-                        .anyRequest().authenticated()  // 나머지는 인증 필요
 
+                        .requestMatchers(new AntPathRequestMatcher("/users/**")).authenticated()
+                        .anyRequest().authenticated()  // 나머지는 인증 필요
+                        //.anyRequest().permitAll()
                 )
+
                 .with(new JwtSecurityConfig(tokenProvider), customizer -> {})
                 // 프론트 연결 시 로그인, 로그아웃 페이지 연결
-//                .formLogin((formLogin) -> formLogin
+                 //.formLogin((formLogin) -> formLogin
+                        //.loginProcessingUrl("users/login"));
 //                        .loginPage("/users/login")  //로그인 페이지
 //                        .defaultSuccessUrl("/")    //로그인 성공 시 이동하는 페이지
 //                        .failureUrl("/loginfail")    // 로그인 실패 시

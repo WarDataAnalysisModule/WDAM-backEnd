@@ -6,6 +6,7 @@ import com.back.wdam.util.ApiResponse;
 import io.micrometer.common.lang.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -23,6 +24,30 @@ public class FileController {
 
     private final FileService fileService;
 
+    static class CustomComparator implements Comparator<UnitListDto> {
+        @Override
+        public int compare(UnitListDto u1, UnitListDto u2) {
+
+//            if(u1.getUnitName()==null && u2.getUnitName()!=null) return -1;
+//            else if(u1.getUnitName()!=null && u2.getUnitName()==null) return 1;
+//            else if(u1.getUnitName()==null && u2.getUnitName()==null) return 0;
+
+            String[] parts1 = u1.getUnitName().split("-");
+            String[] parts2 = u2.getUnitName().split("-");
+
+            // 각 세그먼트별로 비교
+            for (int i = 0; i < Math.min(parts1.length, parts2.length); i++) {
+                int segmentComparison = parts1[i].compareTo(parts2[i]);
+                if (segmentComparison != 0) {
+                    return segmentComparison;
+                }
+            }
+
+            // 모든 세그먼트가 같으면 길이로 비교
+            return Integer.compare(parts1.length, parts2.length);
+        }
+    }
+
     //이 세 파일의 id는 단위부대 id
     //단위부대init_20230116174254.csv
     //단위부대Attributes_#단위부대ID_20230116174254.csv
@@ -33,7 +58,8 @@ public class FileController {
     //상급부대Attributes_#상급부대ID_20230116174254.csv
 
     @PostMapping("/files")
-    public ResponseEntity<ApiResponse<List<UnitListDto>>> fileSave(@RequestPart(value = "behavior") @Nullable MultipartFile behavior, //behavior 파일
+    public ResponseEntity<ApiResponse<List<UnitListDto>>> fileSave(
+                                                @RequestPart(value = "behavior") @Nullable MultipartFile behavior, //behavior 파일
                                                 @RequestPart(value = "upper") @Nullable List<MultipartFile> uppers, //상급부대 정보(attributes)
                                                 @RequestPart(value = "unit") @Nullable List<MultipartFile> units, //단위부대 정보(attributes)
                                                 @RequestPart(value = "init") @Nullable MultipartFile init, //단위부대 정보
@@ -352,6 +378,11 @@ public class FileController {
             }
         }
 
-        return ResponseEntity.ok(ApiResponse.success(fileService.getUnitList()));
+        List<UnitListDto> list = fileService.getUnitList();
+
+        // 커스텀 Comparator를 사용하여 리스트 정렬
+        Collections.sort(list, new CustomComparator());
+        ApiResponse apiResponse = new ApiResponse("1000", list);
+        return ResponseEntity.ok(apiResponse);
     }
 }
