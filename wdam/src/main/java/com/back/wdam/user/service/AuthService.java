@@ -9,6 +9,8 @@ import com.back.wdam.user.dto.TokenRequestDto;
 import com.back.wdam.user.jwt.TokenProvider;
 import com.back.wdam.user.repository.RefreshTokenRepository;
 import com.back.wdam.user.repository.UserRepository;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -16,6 +18,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Date;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -88,5 +93,38 @@ public class AuthService {
 
         // 토큰 발급
         return tokenDto;
+    }
+
+    @Transactional
+    public void logout(TokenRequestDto logout){
+        //1. Access Tocken 검증
+        if(!tokenProvider.validateToken(logout.getAccessToken())){
+            throw new RuntimeException("Access Token 이 유효하지 않습니다.");
+        }
+
+        //2. Access Token에서 userName(id)을 가져옴
+        Authentication authentication = tokenProvider.getAuthentication(logout.getAccessToken());
+
+        //3. DB에서 해당 refresh token 삭제
+        RefreshToken refreshToken = refreshTokenRepository.findByKey(authentication.getName())
+                .orElseThrow(() -> new RuntimeException("이미 로그아웃 된 사용자입니다."));
+
+        refreshTokenRepository.delete(refreshToken);
+
+        // 4. 해당 Access Token의 만료 시간 확인
+        //블랙리스트라는 테이블에 토큰들을 저장하여 토큰의 재사용을 방지하는 방법도 존재
+        /*Date expirationDate = tokenProvider.getExpirationDate(logout.getAccessToken());
+        Date now = new Date(); // 현재 시간
+
+        // Access Token의 만료 시간과 현재 시간 비교
+        if (expirationDate != null && expirationDate.after(now)) {
+
+            // Access Token이 유효하고 아직 만료되지 않은 경우
+            long remainingTimeInMillis = expirationDate.getTime() - now.getTime();
+
+            // 여기서 필요한 로직을 추가하여 유효시간을 활용한 처리 수행
+            // 예) 로그아웃 이벤트 로깅 등 추가 로직 수행 가능
+            // 예) 만료 시간까지 대기 후 Access Token 무효화 처리 등
+        }*/
     }
 }

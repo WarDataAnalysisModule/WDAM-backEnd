@@ -103,6 +103,11 @@ public class TokenProvider {
         return false;
     }
 
+    public Date getExpirationDate(String token) {
+        Claims claims = parseClaims(token);
+        return claims.getExpiration();
+    }
+
     private Claims parseClaims(String accessToken) {
         try {
             return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(accessToken).getBody();
