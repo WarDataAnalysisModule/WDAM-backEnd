@@ -2,25 +2,22 @@ package com.back.wdam.user.service;
 
 import com.back.wdam.entity.RefreshToken;
 import com.back.wdam.entity.Users;
-import com.back.wdam.user.dto.UserRequestDto;
-import com.back.wdam.user.dto.UserResponseDto;
+import com.back.wdam.user.dto.LoginDto;
 import com.back.wdam.user.dto.TokenDto;
 import com.back.wdam.user.dto.TokenRequestDto;
+import com.back.wdam.user.dto.UserRequestDto;
 import com.back.wdam.user.jwt.TokenProvider;
 import com.back.wdam.user.repository.RefreshTokenRepository;
 import com.back.wdam.user.repository.UserRepository;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import com.back.wdam.util.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Date;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -32,23 +29,36 @@ public class AuthService {
     private final RefreshTokenRepository refreshTokenRepository;
 
     @Transactional
-    public UserResponseDto signup(UserRequestDto userRequestDto) {
-        if (userRepository.existsByUserName(userRequestDto.getUsername())) {
+    public ApiResponse signup(UserRequestDto userRequestDto) {
+        // username, email check
+        if (userRepository.existsByUserName(userRequestDto.getUsername())||userRepository.existsByEmail(userRequestDto.getEmail()) ) {
             throw new RuntimeException("이미 가입되어 있는 유저입니다");
         }
 
         Users user = userRequestDto.toUser(passwordEncoder);
-        return UserResponseDto.of(userRepository.save(user));
+        userRepository.save(user);
+        ApiResponse response=new ApiResponse("1000",null);
+        return response;
     }
 
+    // 이미 가입된 회원인 경우 Exeption Handler
     @Transactional
-    public TokenDto login(UserRequestDto userRequestDto) {
+    public ApiResponse signupOrHandleError(UserRequestDto userRequestDto) {
+        try {
+            return signup(userRequestDto);
+        } catch (RuntimeException e) {
+            return new ApiResponse("2000", null);
+        }
+    }
+    @Transactional
+    public TokenDto login(LoginDto loginDto) {
         // 1. Login ID/PW 를 기반으로 AuthenticationToken 생성
-        UsernamePasswordAuthenticationToken authenticationToken = userRequestDto.toAuthentication();
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginDto.getUserName(), loginDto.getPassword());
 
         // 2. 실제로 검증 (사용자 비밀번호 체크) 이 이루어지는 부분
         //    authenticate 메서드가 실행이 될 때 CustomUserDetailsService 에서 만들었던 loadUserByUsername 메서드가 실행됨
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
         // 3. 인증 정보를 기반으로 JWT 토큰 생성
         TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
@@ -61,10 +71,10 @@ public class AuthService {
 
         refreshTokenRepository.save(refreshToken);
 
-        // 5. 토큰 발급
         return tokenDto;
     }
 
+    //access token 만료 시 재발급 받기
     @Transactional
     public TokenDto reissue(TokenRequestDto tokenRequestDto) {
         // 1. Refresh Token 검증
@@ -72,10 +82,10 @@ public class AuthService {
             throw new RuntimeException("Refresh Token 이 유효하지 않습니다.");
         }
 
-        // 2. Access Token 에서 Member ID 가져오기
+        // 2. Access Token 에서 유저 정보 가져오기
         Authentication authentication = tokenProvider.getAuthentication(tokenRequestDto.getAccessToken());
 
-        // 3. 저장소에서 Member ID 를 기반으로 Refresh Token 값 가져옴
+        // 3. DB에서 유저 정보를 기반으로 Refresh Token 값 가져옴
         RefreshToken refreshToken = refreshTokenRepository.findByKey(authentication.getName())
                 .orElseThrow(() -> new RuntimeException("로그아웃 된 사용자입니다."));
 
@@ -111,20 +121,5 @@ public class AuthService {
 
         refreshTokenRepository.delete(refreshToken);
 
-        // 4. 해당 Access Token의 만료 시간 확인
-        //블랙리스트라는 테이블에 토큰들을 저장하여 토큰의 재사용을 방지하는 방법도 존재
-        /*Date expirationDate = tokenProvider.getExpirationDate(logout.getAccessToken());
-        Date now = new Date(); // 현재 시간
-
-        // Access Token의 만료 시간과 현재 시간 비교
-        if (expirationDate != null && expirationDate.after(now)) {
-
-            // Access Token이 유효하고 아직 만료되지 않은 경우
-            long remainingTimeInMillis = expirationDate.getTime() - now.getTime();
-
-            // 여기서 필요한 로직을 추가하여 유효시간을 활용한 처리 수행
-            // 예) 로그아웃 이벤트 로깅 등 추가 로직 수행 가능
-            // 예) 만료 시간까지 대기 후 Access Token 무효화 처리 등
-        }*/
     }
 }

@@ -6,6 +6,7 @@ import com.back.wdam.util.ApiResponse;
 import io.micrometer.common.lang.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -57,7 +58,8 @@ public class FileController {
     //상급부대Attributes_#상급부대ID_20230116174254.csv
 
     @PostMapping("/files")
-    public ResponseEntity<ApiResponse<List<UnitListDto>>> fileSave(@RequestPart(value = "behavior") @Nullable MultipartFile behavior, //behavior 파일
+    public ResponseEntity<ApiResponse<List<UnitListDto>>> fileSave(
+                                                @RequestPart(value = "behavior") @Nullable MultipartFile behavior, //behavior 파일
                                                 @RequestPart(value = "upper") @Nullable List<MultipartFile> uppers, //상급부대 정보(attributes)
                                                 @RequestPart(value = "unit") @Nullable List<MultipartFile> units, //단위부대 정보(attributes)
                                                 @RequestPart(value = "init") @Nullable MultipartFile init, //단위부대 정보
@@ -380,7 +382,7 @@ public class FileController {
 
         // 커스텀 Comparator를 사용하여 리스트 정렬
         Collections.sort(list, new CustomComparator());
-
-        return ResponseEntity.ok(ApiResponse.success(list));
+        ApiResponse apiResponse = new ApiResponse("1000", list);
+        return ResponseEntity.ok(apiResponse);
     }
 }
