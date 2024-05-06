@@ -2,11 +2,9 @@ package com.back.wdam.analyze.controller;
 
 import com.back.wdam.analyze.dto.AnalyzeResultDto;
 import com.back.wdam.analyze.service.AnalyzeService;
-import com.back.wdam.user.jwt.PrincipalDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import com.back.wdam.util.ApiResponse;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
