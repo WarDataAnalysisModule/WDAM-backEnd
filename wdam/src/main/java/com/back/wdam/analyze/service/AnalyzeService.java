@@ -8,6 +8,7 @@ import com.back.wdam.user.repository.UserRepository;
 import com.back.wdam.util.exception.CustomException;
 import com.back.wdam.util.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,16 +25,17 @@ public class AnalyzeService {
     private final UserRepository userRepository;
     private final LogRepository logRepository;
 
-    public Long saveNewAnalyzeResult(Long userIdx, String analysisFeature, String result, LocalDateTime logCreated) {
+    public Long saveNewAnalyzeResult(UserDetails userDetails, String analysisFeature, String result, LocalDateTime logCreated) {
 
-        Users users = getUserById(userIdx);
-        ResultLog resultLog = logRepository.saveAndFlush(new ResultLog(users, analysisFeature, result, logCreated));
+        Users user = getUserByName(userDetails);
+        ResultLog resultLog = logRepository.saveAndFlush(new ResultLog(user, analysisFeature, result, logCreated));
         return resultLog.getLogIdx();
     }
 
-    public List<AnalyzeResultDto> getAnalyzeResults(Long userIdx, LocalDateTime logCreated) {
+    public List<AnalyzeResultDto> getAnalyzeResults(UserDetails userDetails, LocalDateTime logCreated) {
 
-        List<ResultLog> resultLogs = logRepository.findByUserIdAndLogCreated(userIdx, logCreated);
+        Users user = getUserByName(userDetails);
+        List<ResultLog> resultLogs = logRepository.findByUserIdAndLogCreated(user.getUserIdx(), logCreated);
         if(resultLogs.isEmpty())
             throw new CustomException(ErrorCode.RESULTLOG_NOT_FOUND);
 
@@ -44,9 +46,9 @@ public class AnalyzeService {
         return analyzeResultDtos;
     }
 
-    private Users getUserById(Long userIdx) {
+    private Users getUserByName(UserDetails userDetails) {
 
-        Optional<Users> users = userRepository.findByUserIdx(userIdx);
+        Optional<Users> users = userRepository.findByUserName(userDetails.getUsername());
         if(users.isEmpty())
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
         return users.get();
