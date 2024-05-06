@@ -10,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
 
+// 회원가입 시 사용하는 정보
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
@@ -29,7 +30,7 @@ public class UserRequestDto {
                 .role(Role.USER)
                 .email(email)
                 .phone(phone)
-                .userState("active")
+                .userState("active") // 회원가입 시 자동으로 활성화
                 .userCreated(LocalDateTime.now())
                 .build();
     }

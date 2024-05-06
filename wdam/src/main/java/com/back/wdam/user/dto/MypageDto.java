@@ -7,17 +7,14 @@ import lombok.Setter;
 @Setter
 public class MypageDto {
 
-    private String userId;
-
-    private String password;
+    private String userName;
 
     private String phone;
 
     private String email;
 
-    public MypageDto(String userId, String password, String phone, String email){
-        this.userId = userId;
-        this.password = password;
+    public MypageDto(String userName, String phone, String email){
+        this.userName = userName;
         this.phone = phone;
         this.email = email;
     }

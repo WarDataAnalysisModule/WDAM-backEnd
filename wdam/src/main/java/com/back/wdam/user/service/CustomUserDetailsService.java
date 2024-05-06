@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 
+// UserDetailsService implements
 @Service
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
