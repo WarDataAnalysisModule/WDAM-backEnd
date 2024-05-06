@@ -2,6 +2,7 @@ package com.back.wdam.user.dto;
 
 import lombok.*;
 
+// 토큰 정보 response 시 사용
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
