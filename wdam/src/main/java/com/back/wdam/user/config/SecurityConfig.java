@@ -63,8 +63,8 @@ public class SecurityConfig {
                         .requestMatchers(new AntPathRequestMatcher("/users/login")).permitAll()
 
                         .requestMatchers(new AntPathRequestMatcher("/users/**")).authenticated()
-                        .anyRequest().authenticated()  // 나머지는 인증 필요
-                        //.anyRequest().permitAll()
+                        //.anyRequest().authenticated()  // 나머지는 인증 필요
+                        .anyRequest().permitAll()
                 )
 
                 .with(new JwtSecurityConfig(tokenProvider), customizer -> {})
