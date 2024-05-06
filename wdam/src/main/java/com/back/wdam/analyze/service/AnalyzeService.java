@@ -12,6 +12,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,9 +30,14 @@ public class AnalyzeService {
 
     public Long saveNewAnalyzeResult(UserDetails userDetails, String analysisFeature, String result, LocalDateTime logCreated) {
 
-        Users user = getUserByName(userDetails);
-        ResultLog resultLog = logRepository.saveAndFlush(new ResultLog(user, analysisFeature, result, logCreated));
-        return resultLog.getLogIdx();
+        try {
+            Users user = getUserByName(userDetails);
+
+            ResultLog resultLog = logRepository.saveAndFlush(new ResultLog(user, analysisFeature, result, logCreated));
+            return resultLog.getLogIdx();
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.DATA_SAVE_FAILURE);
+        }
     }
 
     public List<AnalyzeResultDto> getAnalyzeResults(UserDetails userDetails, LocalDateTime logCreated) {
@@ -44,6 +52,78 @@ public class AnalyzeService {
             analyzeResultDtos.add(new AnalyzeResultDto(resultLog));
         }
         return analyzeResultDtos;
+    }
+
+    public boolean sendAnalyzeDataToModule(UserDetails userDetails, String characteristics, String unit, LocalDateTime logCreated) {
+
+        String line, preprocessedData = "", result = "";
+        ProcessBuilder processBuilder;
+        Process process;
+        int exitCode;
+        BufferedReader stdoutReader, stderrReader;
+
+        try {
+            // module1 실행
+            processBuilder = new ProcessBuilder("python"
+                    , "E:\\STUDY\\WDAM\\WDAM-backEnd\\wdam\\src\\main\\java\\com\\back\\wdam\\pythonModule\\module1.py"
+                    ,  "\"" + characteristics + "\""
+                    , unit);
+            process = processBuilder.start();
+
+            stdoutReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            while ((line = stdoutReader.readLine()) != null) {
+                if (line.startsWith("preprocessed_data:")) {
+                    preprocessedData = stdoutReader.readLine().trim();
+                }
+            }
+            if(preprocessedData.equals("")) {
+                throw new CustomException(ErrorCode.PREPROCESSED_DATA_NULL);
+            }
+
+            stderrReader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+            while ((line = stderrReader.readLine()) != null) {
+                System.out.println("Error: " + line);
+            }
+
+            exitCode = process.waitFor();
+            System.out.println("Exited with error code " + exitCode);
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            // module2 실행
+            processBuilder = new ProcessBuilder("python"
+                    , "E:\\STUDY\\WDAM\\WDAM-backEnd\\wdam\\src\\main\\java\\com\\back\\wdam\\pythonModule\\module2.py"
+                    ,  "\"" + characteristics + "\""
+                    , unit
+                    , "\"" + preprocessedData + "\"");
+            process = processBuilder.start();
+
+            stdoutReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            while ((line = stdoutReader.readLine()) != null) {
+                if (line.startsWith("result: ")) {
+                    result = stdoutReader.readLine().trim();
+                }
+            }
+            if(result.equals("")) {
+                throw new CustomException(ErrorCode.RESULT_NOT_CREATED);
+            }
+
+            stderrReader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+            while ((line = stderrReader.readLine()) != null) {
+                System.out.println("Error: " + line);
+            }
+
+            exitCode = process.waitFor();
+            System.out.println("Exited with error code " + exitCode);
+
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        saveNewAnalyzeResult(userDetails, characteristics, result, logCreated);
+        return true;
     }
 
     private Users getUserByName(UserDetails userDetails) {

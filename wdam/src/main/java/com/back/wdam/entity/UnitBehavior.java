@@ -21,7 +21,7 @@ public class UnitBehavior {
     private Long behaviorIdx;
 
     @ManyToOne
-    @JoinColumn(name = "list_jdx")
+    @JoinColumn(name = "list_idx")
     private UnitList unitList;
 
     private Long simulationTime;
