@@ -1,0 +1,6 @@
+SimulationTime(sec),ID,BehaviorName,Status
+60,2,전술기동,Running
+60,3,전술기동,Running
+150,2,전술기동,Finished
+180,2,전술기동,Running
+9180,2,전술기동,Finished
