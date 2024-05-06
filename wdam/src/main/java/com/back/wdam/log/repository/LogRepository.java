@@ -1,4 +1,4 @@
-package com.back.wdam.analyze.repository;
+package com.back.wdam.log.repository;
 
 import com.back.wdam.entity.ResultLog;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,10 +9,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Repository
-public interface AnalyzeRepository extends JpaRepository<ResultLog, Long> {
+public interface LogRepository extends JpaRepository<ResultLog, Long> {
 
     @Transactional
     ResultLog saveAndFlush(ResultLog resultLog);

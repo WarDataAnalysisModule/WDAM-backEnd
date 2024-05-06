@@ -1,9 +1,9 @@
 package com.back.wdam.analyze.service;
 
 import com.back.wdam.analyze.dto.AnalyzeResultDto;
-import com.back.wdam.analyze.repository.AnalyzeRepository;
 import com.back.wdam.entity.ResultLog;
 import com.back.wdam.entity.Users;
+import com.back.wdam.log.repository.LogRepository;
 import com.back.wdam.user.repository.UserRepository;
 import com.back.wdam.util.exception.CustomException;
 import com.back.wdam.util.exception.ErrorCode;
@@ -22,18 +22,18 @@ import java.util.Optional;
 public class AnalyzeService {
 
     private final UserRepository userRepository;
-    private final AnalyzeRepository analyzeRepository;
+    private final LogRepository logRepository;
 
     public Long saveNewAnalyzeResult(Long userIdx, String analysisFeature, String result, LocalDateTime logCreated) {
 
         Users users = getUserById(userIdx);
-        ResultLog resultLog = analyzeRepository.saveAndFlush(new ResultLog(users, analysisFeature, result, logCreated));
+        ResultLog resultLog = logRepository.saveAndFlush(new ResultLog(users, analysisFeature, result, logCreated));
         return resultLog.getLogIdx();
     }
 
     public List<AnalyzeResultDto> getAnalyzeResults(Long userIdx, LocalDateTime logCreated) {
 
-        List<ResultLog> resultLogs = analyzeRepository.findByUserIdAndLogCreated(userIdx, logCreated);
+        List<ResultLog> resultLogs = logRepository.findByUserIdAndLogCreated(userIdx, logCreated);
         if(resultLogs.isEmpty())
             throw new CustomException(ErrorCode.RESULTLOG_NOT_FOUND);
 
