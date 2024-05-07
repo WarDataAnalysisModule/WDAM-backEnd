@@ -58,23 +58,19 @@ public class SecurityConfig {
                 .sessionManagement(httpSecuritySessionManagementConfigurer -> httpSecuritySessionManagementConfigurer
                                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)) //세션 사용 X
                 .authorizeHttpRequests((authorizeRequests) -> authorizeRequests
-                        //인증 불필요
+                        // 인증(토큰) 없이 접속 가능한 api
                         .requestMatchers(new AntPathRequestMatcher("/users/signup")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/users/login")).permitAll()
-                        //인증 필요
-                        .requestMatchers(new AntPathRequestMatcher("/users/update")).authenticated()
-                        .requestMatchers(new AntPathRequestMatcher("/users/logout")).authenticated()
-                        .requestMatchers(new AntPathRequestMatcher("/users")).authenticated()
-                        .requestMatchers(new AntPathRequestMatcher("/files")).authenticated()
-                        .requestMatchers(new AntPathRequestMatcher("/log/**")).authenticated()
-                        .requestMatchers(new AntPathRequestMatcher("/analyze")).authenticated()
-                        .requestMatchers(new AntPathRequestMatcher("/analyze/**")).authenticated()
-                        .anyRequest().authenticated()
 
+                        .requestMatchers(new AntPathRequestMatcher("/users/**")).authenticated()
+                        //.anyRequest().authenticated()  // 나머지는 인증 필요
+                        .anyRequest().permitAll()
                 )
+
                 .with(new JwtSecurityConfig(tokenProvider), customizer -> {})
                 // 프론트 연결 시 로그인, 로그아웃 페이지 연결
-//                .formLogin((formLogin) -> formLogin
+                 //.formLogin((formLogin) -> formLogin
+                        //.loginProcessingUrl("users/login"));
 //                        .loginPage("/users/login")  //로그인 페이지
 //                        .defaultSuccessUrl("/")    //로그인 성공 시 이동하는 페이지
 //                        .failureUrl("/loginfail")    // 로그인 실패 시
