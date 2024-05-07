@@ -20,7 +20,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.stream.Collectors;
 
-//3강 3:00 Token Provider
 
 @Slf4j
 @Component
