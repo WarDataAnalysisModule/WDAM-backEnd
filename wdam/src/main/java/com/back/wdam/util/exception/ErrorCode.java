@@ -16,7 +16,9 @@ public enum ErrorCode {
     // preprocessedData가 null일 경우
     PREPROCESSED_DATA_NULL(HttpStatus.INTERNAL_SERVER_ERROR, "500"),
     RESULT_NOT_CREATED(HttpStatus.INTERNAL_SERVER_ERROR, "500"),
-    DATA_SAVE_FAILURE(HttpStatus.INTERNAL_SERVER_ERROR, "500");
+    DATA_SAVE_FAILURE(HttpStatus.INTERNAL_SERVER_ERROR, "500"),
+    PROCESS_EXECUTION_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "500");
+
 
     private final HttpStatus status;
     private final String code;

@@ -56,75 +56,82 @@ public class AnalyzeService {
 
     public boolean sendAnalyzeDataToModule(UserDetails userDetails, String characteristics, String unit, LocalDateTime logCreated) {
 
-        String line, preprocessedData = "", result = "";
+        String line = "", preprocessedData = "", result = "";
         ProcessBuilder processBuilder;
         Process process;
         int exitCode;
-        BufferedReader stdoutReader, stderrReader;
 
         try {
             // module1 실행
             processBuilder = new ProcessBuilder("python"
                     , "E:\\STUDY\\WDAM\\WDAM-backEnd\\wdam\\src\\main\\java\\com\\back\\wdam\\pythonModule\\module1.py"
-                    ,  "\"" + characteristics + "\""
+                    , characteristics
                     , unit);
             process = processBuilder.start();
 
-            stdoutReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            BufferedReader stdoutReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             while ((line = stdoutReader.readLine()) != null) {
                 if (line.startsWith("preprocessed_data:")) {
-                    preprocessedData = stdoutReader.readLine().trim();
+                    preprocessedData = line.substring("preprocessed_data:".length()).trim();
                 }
             }
-            if(preprocessedData.equals("")) {
-                throw new CustomException(ErrorCode.PREPROCESSED_DATA_NULL);
-            }
 
-            stderrReader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+            BufferedReader stderrReader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
             while ((line = stderrReader.readLine()) != null) {
                 System.out.println("Error: " + line);
             }
 
             exitCode = process.waitFor();
-            System.out.println("Exited with error code " + exitCode);
+            if (exitCode != 0) {
+                throw new IOException("Process exited with error code " + exitCode);
+            }
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
+            throw new CustomException(ErrorCode.PROCESS_EXECUTION_ERROR);
+        }
+
+        if (preprocessedData.equals("")) {
+            throw new CustomException(ErrorCode.PREPROCESSED_DATA_NULL);
         }
 
         try {
             // module2 실행
             processBuilder = new ProcessBuilder("python"
                     , "E:\\STUDY\\WDAM\\WDAM-backEnd\\wdam\\src\\main\\java\\com\\back\\wdam\\pythonModule\\module2.py"
-                    ,  "\"" + characteristics + "\""
+                    , characteristics
                     , unit
-                    , "\"" + preprocessedData + "\"");
+                    , preprocessedData);
             process = processBuilder.start();
 
-            stdoutReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            BufferedReader stdoutReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             while ((line = stdoutReader.readLine()) != null) {
-                if (line.startsWith("result: ")) {
-                    result = stdoutReader.readLine().trim();
+                if (line.startsWith("result:")) {
+                    result = line.substring("result:".length()).trim();
                 }
             }
-            if(result.equals("")) {
-                throw new CustomException(ErrorCode.RESULT_NOT_CREATED);
-            }
 
-            stderrReader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+            BufferedReader stderrReader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
             while ((line = stderrReader.readLine()) != null) {
                 System.out.println("Error: " + line);
             }
 
             exitCode = process.waitFor();
-            System.out.println("Exited with error code " + exitCode);
-
+            if (exitCode != 0) {
+                throw new IOException("Process exited with error code " + exitCode);
+            }
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
+            throw new CustomException(ErrorCode.PROCESS_EXECUTION_ERROR);
+        }
+
+        if (result.equals("")) {
+            throw new CustomException(ErrorCode.RESULT_NOT_CREATED);
         }
 
         saveNewAnalyzeResult(userDetails, characteristics, result, logCreated);
         return true;
     }
+
 
     private Users getUserByName(UserDetails userDetails) {
 

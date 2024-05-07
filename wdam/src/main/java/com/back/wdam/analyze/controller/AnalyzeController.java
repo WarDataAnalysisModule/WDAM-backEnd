@@ -28,7 +28,7 @@ public class AnalyzeController {
     }
 
     @GetMapping("/result")
-    ResponseEntity<ApiResponse<List<AnalyzeResultDto>>> getAnalyzeResult(@AuthenticationPrincipal UserDetails userDetails, String analysisFeature, String result, LocalDateTime logCreated) {
+    ResponseEntity<ApiResponse<List<AnalyzeResultDto>>> getAnalyzeResult(@AuthenticationPrincipal UserDetails userDetails, LocalDateTime logCreated) {
         return ResponseEntity.ok(ApiResponse.success(analyzeService.getAnalyzeResults(userDetails, logCreated)));
     }
 }
