@@ -58,7 +58,7 @@ public class FileController {
     //상급부대Attributes_#상급부대ID_20230116174254.csv
 
     @PostMapping("/files")
-    public ResponseEntity<ApiResponse<List<UnitListDto>>> fileSave(
+    public ResponseEntity<ApiResponse<List<ListDto>>> fileSave(
                                                 @RequestPart(value = "behavior") @Nullable MultipartFile behavior, //behavior 파일
                                                 @RequestPart(value = "upper") @Nullable List<MultipartFile> uppers, //상급부대 정보(attributes)
                                                 @RequestPart(value = "unit") @Nullable List<MultipartFile> units, //단위부대 정보(attributes)
@@ -67,6 +67,8 @@ public class FileController {
                          ) throws ParseException {
 
         BufferedReader br = null;
+
+        LocalDateTime SimulationTime = null;
 
         for(MultipartFile upper: uppers){
 
@@ -80,6 +82,7 @@ public class FileController {
 
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
                 LocalDateTime dateTime = LocalDateTime.parse(dateTimeString, formatter);
+                SimulationTime = dateTime;
 
                 try {
                     br = new BufferedReader(new InputStreamReader(upper.getInputStream(), "EUC-KR"));
@@ -382,7 +385,13 @@ public class FileController {
 
         // 커스텀 Comparator를 사용하여 리스트 정렬
         Collections.sort(list, new CustomComparator());
-        ApiResponse apiResponse = new ApiResponse("1000", list);
+        ListDto listDto = new ListDto();
+        listDto.setSimulationTime(SimulationTime);
+        listDto.setUnitList(list);
+
+        ApiResponse apiResponse = new ApiResponse("1000", listDto);
+
         return ResponseEntity.ok(apiResponse);
+
     }
 }
