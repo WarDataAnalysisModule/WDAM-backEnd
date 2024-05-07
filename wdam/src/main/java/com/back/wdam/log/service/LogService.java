@@ -28,10 +28,10 @@ public class LogService {
 
     public List<LogDto> getLogs(UserDetails userDetails, LocalDateTime logCreated) {
 
-        //Users user = getUserByName(userDetails);
+        Users user = getUserByName(userDetails);
 
-        //List<ResultLog> resultLogs = logRepository.findByUserIdAndLogCreated(user.getUserIdx(), logCreated);
-        List<ResultLog> resultLogs = logRepository.findByUserIdAndLogCreated(3L, logCreated);
+        List<ResultLog> resultLogs = logRepository.findByUserIdAndLogCreated(user.getUserIdx(), logCreated);
+        //List<ResultLog> resultLogs = logRepository.findByUserIdAndLogCreated(3L, logCreated);
         if(resultLogs.isEmpty())
             throw new CustomException(ErrorCode.RESULTLOG_NOT_FOUND);
 

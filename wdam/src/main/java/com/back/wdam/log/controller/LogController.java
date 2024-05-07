@@ -24,16 +24,10 @@ public class LogController {
 
     private final LogService logService;
 
-//    @GetMapping("/{logCreated}")
-//    ResponseEntity<ApiResponse<List<LogDto>>> getLogs(@AuthenticationPrincipal UserDetails userDetails, @PathVariable("logCreated")LocalDateTime logCreated) {
-//        logCreatedString = logCreatedString.replaceAll("\\.\\d+$", "");
-//        LocalDateTime logCreated = LocalDateTime.parse(logCreatedString);
-//        return ResponseEntity.ok(ApiResponse.success((logService.getLogs(userDetails, logCreated))));
-//    }
     @GetMapping("/{logCreated}")
-    ResponseEntity<ApiResponse<List<LogDto>>> getLogs(@PathVariable("logCreated") String logCreatedString) {
+    ResponseEntity<ApiResponse<List<LogDto>>> getLogs(@AuthenticationPrincipal UserDetails userDetails, @PathVariable("logCreated") String logCreatedString) {
         logCreatedString = logCreatedString.replaceAll("\\.\\d+$", "");
         LocalDateTime logCreated = LocalDateTime.parse(logCreatedString);
-        return ResponseEntity.ok(ApiResponse.success((logService.getLogs(null, logCreated))));
+        return ResponseEntity.ok(ApiResponse.success((logService.getLogs(userDetails, logCreated))));
     }
 }
