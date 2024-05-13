@@ -43,3 +43,4 @@ messages = [
 
 result=AnaylizeData(openai, messages)
 print(result)
+

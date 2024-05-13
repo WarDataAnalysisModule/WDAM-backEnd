@@ -74,9 +74,5 @@ public class AuthController {
                 .body(apiResponse);
     }
 
-    @GetMapping("/test")
-    public ResponseEntity<ApiResponse> testapi(){
-        ApiResponse apiResponse=new ApiResponse("1000",null);
-        return ResponseEntity.ok(apiResponse);
-    }
+    
 }
