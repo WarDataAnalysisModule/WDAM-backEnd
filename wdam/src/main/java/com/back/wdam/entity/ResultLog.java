@@ -23,7 +23,10 @@ public class ResultLog {
     private Users users;
 
     private String analysisFeature;
+
+    @Column(name = "result", length = 10000)
     private String result;
+
     private LocalDateTime logCreated;   // 로그 생성일자
     private LocalDateTime createdAt;    // 시뮬레이션 일자
 

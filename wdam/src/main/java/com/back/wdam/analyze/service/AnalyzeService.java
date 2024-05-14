@@ -13,8 +13,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -62,21 +64,13 @@ public class AnalyzeService {
         int exitCode;
 
         try {
-            // module1 실행
             processBuilder = new ProcessBuilder("python"
-                    , "E:\\STUDY\\WDAM\\WDAM-backEnd\\wdam\\src\\main\\java\\com\\back\\wdam\\pythonModule\\module1.py"
+                    , "src\\main\\java\\com\\back\\wdam\\pythonModule\\module1.py"
                     , characteristics
                     , unit);
             process = processBuilder.start();
 
-            BufferedReader stdoutReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            while ((line = stdoutReader.readLine()) != null) {
-                if (line.startsWith("preprocessed_data:")) {
-                    preprocessedData = line.substring("preprocessed_data:".length()).trim();
-                }
-            }
-
-            BufferedReader stderrReader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+            BufferedReader stderrReader = new BufferedReader(new InputStreamReader(process.getErrorStream(), StandardCharsets.UTF_8));
             while ((line = stderrReader.readLine()) != null) {
                 System.out.println("Error: " + line);
             }
@@ -85,6 +79,17 @@ public class AnalyzeService {
             if (exitCode != 0) {
                 throw new IOException("Process exited with error code " + exitCode);
             }
+
+            StringBuilder outputBuilder = new StringBuilder();
+            try (BufferedReader fileReader = new BufferedReader(new FileReader("src\\main\\java\\com\\back\\wdam\\analyze\\resources\\preprocessedData.txt"))) {
+                while ((line = fileReader.readLine()) != null) {
+                    outputBuilder.append(line).append("\n");
+                }
+                preprocessedData = outputBuilder.toString().trim();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
             throw new CustomException(ErrorCode.PROCESS_EXECUTION_ERROR);
@@ -97,20 +102,13 @@ public class AnalyzeService {
         try {
             // module2 실행
             processBuilder = new ProcessBuilder("python"
-                    , "E:\\STUDY\\WDAM\\WDAM-backEnd\\wdam\\src\\main\\java\\com\\back\\wdam\\pythonModule\\module2.py"
+                    , "src\\main\\java\\com\\back\\wdam\\pythonModule\\module2.py"
                     , characteristics
                     , unit
                     , preprocessedData);
             process = processBuilder.start();
 
-            BufferedReader stdoutReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            while ((line = stdoutReader.readLine()) != null) {
-                if (line.startsWith("result:")) {
-                    result = line.substring("result:".length()).trim();
-                }
-            }
-
-            BufferedReader stderrReader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+            BufferedReader stderrReader = new BufferedReader(new InputStreamReader(process.getErrorStream(), StandardCharsets.UTF_8));
             while ((line = stderrReader.readLine()) != null) {
                 System.out.println("Error: " + line);
             }
@@ -119,6 +117,17 @@ public class AnalyzeService {
             if (exitCode != 0) {
                 throw new IOException("Process exited with error code " + exitCode);
             }
+
+            StringBuilder outputBuilder = new StringBuilder();
+            try (BufferedReader fileReader = new BufferedReader(new FileReader("src\\main\\java\\com\\back\\wdam\\analyze\\resources\\result.txt"))) {
+                while ((line = fileReader.readLine()) != null) {
+                    outputBuilder.append(line).append("\n");
+                }
+                result = outputBuilder.toString().trim();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
             throw new CustomException(ErrorCode.PROCESS_EXECUTION_ERROR);

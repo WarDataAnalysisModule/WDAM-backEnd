@@ -22,7 +22,7 @@ param2: 데이터베이스 커서
 return: 부대 ID
 """
 def FindID(name, cursor):
-    query = "SELECT unitId FROM Unit_List WHERE unitName = %s"
+    query = "SELECT list_idx FROM unit_list WHERE unit_name = %s"
     cursor.execute(query, (name,))
     id = cursor.fetchone()
     id=id[0]
@@ -37,7 +37,7 @@ param2: 데이터베이스 커서
 return: 추출한 로그
 """
 def Extract_UnitBehavior(id, cursor):
-    query = "SELECT simulationTime, behaviorName, status FROM UnitBehavior WHERE unitId = %s"
+    query = "SELECT simulation_time, behavior_name, status FROM unit_behavior WHERE list_idx = %s"
     cursor.execute(query, (id,))
     result=cursor.fetchall()
 
@@ -86,6 +86,7 @@ def DatabaseDeconnect(conn, cursor):
 
 ###################################################################################################
 
+# -*- coding: utf-8 -*-
 import sys
 
 if __name__ == "__main__":
@@ -115,11 +116,21 @@ if __name__ == "__main__":
     if characteristic == "부대 행동":
         messages = [
             {"role": "system", "content": "당신은 주어진 데이터를 분석에 용이한 형태로 전처리해야 합니다."},
-            {"role": "user", "content": "Simulation Time과 Status를 이용하여 각 BehaviorName의 시작 시각과 종료 시각을 알려주세요."},
+            {"role": "user", "content": "Simulation Time과 Status를 이용하여 각 BehaviorName의 시작 시각과 종료 시각을 알려주세요.\
+             다음 예시를 참고하여 형식에 맞춰 알려주세요.\
+             BehaviorName: 전술기동\
+            - 시작 시각: 60\
+            - 종료 시각: 150\
+            BehaviorName: 전술기동\
+            - 시작 시각: 180\
+            - 종료 시각: 9180"},
             {"role": "assistant", "content": input_texts}
         ]
     else:
         messages = []
 
     preprocessed_data=DataPreprocessing(openai, messages)
-    print("preprocessed_data: ", preprocessed_data)
+
+    # 파일로 저장
+    with open("src/main/java/com/back/wdam/analyze/resources/preprocessedData.txt", "w", encoding="utf-8") as file:
+        file.write(preprocessed_data)

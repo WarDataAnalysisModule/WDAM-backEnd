@@ -1,0 +1,15 @@
+BehaviorName: 전술기동
+- 시작 시각: 0
+- 종료 시각: 70
+
+BehaviorName: 접근
+- 시작 시각: 80
+- 종료 시각: 100
+
+BehaviorName: 공격
+- 시작 시각: 110
+- 종료 시각: 130
+
+BehaviorName: 회피
+- 시작 시각: 140
+- 종료 시각: 160

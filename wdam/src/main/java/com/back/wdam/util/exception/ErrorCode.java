@@ -19,7 +19,6 @@ public enum ErrorCode {
     DATA_SAVE_FAILURE(HttpStatus.INTERNAL_SERVER_ERROR, "500"),
     PROCESS_EXECUTION_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "500");
 
-
     private final HttpStatus status;
     private final String code;
 }
