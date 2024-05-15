@@ -16,17 +16,19 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.web.filter.CorsFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
 
 @EnableWebSecurity
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final TokenProvider tokenProvider;
-    private final CorsFilter corsFilter;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
 
@@ -35,6 +37,19 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
+    @Bean
+    public CorsConfigurationSource configurationSource () {
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowCredentials(false);
+        config.setAllowedOrigins(Arrays.asList("*"));
+        config.setAllowedMethods(Arrays.asList("POST", "GET", "PUT", "DELETE"));
+        config.setAllowedHeaders(Arrays.asList("*"));
+        config.setMaxAge(3600 * 6L);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
+    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -48,7 +63,7 @@ public class SecurityConfig {
                         .accessDeniedHandler(jwtAccessDeniedHandler)
                         .authenticationEntryPoint(jwtAuthenticationEntryPoint)
                 )
-                .addFilterBefore(corsFilter, UsernamePasswordAuthenticationFilter.class)
+                .cors(cors -> cors.configurationSource(configurationSource()))
                 .headers((headers) -> headers
                                         .addHeaderWriter(new XFrameOptionsHeaderWriter(
                                                 XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN)))
@@ -58,19 +73,23 @@ public class SecurityConfig {
                 .sessionManagement(httpSecuritySessionManagementConfigurer -> httpSecuritySessionManagementConfigurer
                                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)) //세션 사용 X
                 .authorizeHttpRequests((authorizeRequests) -> authorizeRequests
-                        // 인증(토큰) 없이 접속 가능한 api
+                        //인증 불필요
                         .requestMatchers(new AntPathRequestMatcher("/users/signup")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/users/login")).permitAll()
+                        //인증 필요
+                        .requestMatchers(new AntPathRequestMatcher("/users/update")).authenticated()
+                        .requestMatchers(new AntPathRequestMatcher("/users/logout")).authenticated()
+                        .requestMatchers(new AntPathRequestMatcher("/users")).authenticated()
+                        .requestMatchers(new AntPathRequestMatcher("/files")).authenticated()
+                        .requestMatchers(new AntPathRequestMatcher("/log/**")).authenticated()
+                        .requestMatchers(new AntPathRequestMatcher("/analyze")).authenticated()
+                        .requestMatchers(new AntPathRequestMatcher("/analyze/**")).authenticated()
+                        .anyRequest().authenticated()
 
-                        .requestMatchers(new AntPathRequestMatcher("/users/**")).authenticated()
-                        //.anyRequest().authenticated()  // 나머지는 인증 필요
-                        .anyRequest().permitAll()
                 )
-
                 .with(new JwtSecurityConfig(tokenProvider), customizer -> {})
                 // 프론트 연결 시 로그인, 로그아웃 페이지 연결
-                 //.formLogin((formLogin) -> formLogin
-                        //.loginProcessingUrl("users/login"));
+//                .formLogin((formLogin) -> formLogin
 //                        .loginPage("/users/login")  //로그인 페이지
 //                        .defaultSuccessUrl("/")    //로그인 성공 시 이동하는 페이지
 //                        .failureUrl("/loginfail")    // 로그인 실패 시
