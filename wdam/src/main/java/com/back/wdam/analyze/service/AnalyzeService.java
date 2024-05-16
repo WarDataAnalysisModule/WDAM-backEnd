@@ -1,9 +1,8 @@
 package com.back.wdam.analyze.service;
 
 import com.back.wdam.analyze.dto.AnalyzeResultDto;
-import com.back.wdam.entity.ResultLog;
-import com.back.wdam.entity.Users;
-import com.back.wdam.file.repository.UnitListRepository;
+import com.back.wdam.entity.*;
+import com.back.wdam.file.repository.*;
 import com.back.wdam.log.repository.LogRepository;
 import com.back.wdam.user.repository.UserRepository;
 import com.back.wdam.util.exception.CustomException;
@@ -31,6 +30,11 @@ public class AnalyzeService {
     private final UserRepository userRepository;
     private final LogRepository logRepository;
     private final UnitListRepository unitListRepository;
+    private final BehaviorRepository behaviorRepository;
+    private final EventRepository eventRepository;
+    private final InitRepository initRepository;
+    private final UnitRepository unitRepository;
+    private final UpperRepository upperRepository;
 
     public Long saveNewAnalyzeResult(UserDetails userDetails, String analysisFeature, String result, LocalDateTime logCreated) {
 
@@ -146,24 +150,50 @@ public class AnalyzeService {
     private boolean checkDataForAnalysis(UserDetails userDetails, String characteristics, String unit, LocalDateTime logCreated) {
 
         Users user = getUserByName(userDetails);
-        long listIdx = unitListRepository.findByUserIdxAndUnitName(user.getUserIdx(), unit);
+        Optional<UnitList> unitList = unitListRepository.findByUserIdxAndUnitName(user.getUserIdx(), unit);
+        if(unitList.isEmpty())
+            throw new CustomException(ErrorCode.UNIT_LIST_NOT_FOUND);
 
         if(characteristics.equals("부대 행동")) {
-
-            
+            checkUnitBehavior(user.getUserIdx(), unitList.get().getListIdx());
+            checkUnitInit(user.getUserIdx(), unitList.get().getListIdx());
+            checkUnitAttributes(user.getUserIdx(), unitList.get().getListIdx());
+            checkUpperAttributes(user.getUserIdx(), unitList.get().getListIdx());
         }
         else {
             throw new CustomException(ErrorCode.CHARACTERISTIC_INVALID);
         }
-
         return true;
     }
 
     private Users getUserByName(UserDetails userDetails) {
-
         Optional<Users> users = userRepository.findByUserName(userDetails.getUsername());
         if(users.isEmpty())
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
         return users.get();
+    }
+
+    private void checkUnitBehavior(Long userIdx, Long listIdx) {
+        Optional<UnitBehavior> behavior = behaviorRepository.findByUserIdxAndListIdx(userIdx, listIdx);
+        if(behavior.isEmpty())
+            throw new CustomException(ErrorCode.BEHAVIOR_NOT_FOUND);
+    }
+
+    private void checkUnitInit(Long userIdx, Long listIdx) {
+        Optional<UnitInit> unitInit = initRepository.findByUserIdxAndListIdx(userIdx, listIdx);
+        if(unitInit.isEmpty())
+            throw new CustomException(ErrorCode.UNIT_INIT_NOT_FOUND);
+    }
+
+    private void checkUnitAttributes(Long userIdx, Long listIdx) {
+        Optional<UnitAttributes> unitAttributes = unitRepository.findByUserIdxAndListIdx(userIdx, listIdx);
+        if(unitAttributes.isEmpty())
+            throw new CustomException(ErrorCode.UNIT_ATTRIBUTES_NOT_FOUND);
+    }
+
+    private void checkUpperAttributes(Long userIdx, Long listIdx) {
+        Optional<UpperAttributes> upperAttributes = upperRepository.findByUserIdxAndListIdx(userIdx, listIdx);
+        if(upperAttributes.isEmpty())
+            throw new CustomException(ErrorCode.UPPER_ATTRIBUTES_NOT_FOUND);
     }
 }
