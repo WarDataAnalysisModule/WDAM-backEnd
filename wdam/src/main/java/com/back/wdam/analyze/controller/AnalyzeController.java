@@ -24,6 +24,7 @@ public class AnalyzeController {
 
     @PostMapping("")
     ResponseEntity<ApiResponse<Boolean>> sendAnalyzeDataToModule(@AuthenticationPrincipal UserDetails userDetails, String characteristics, String unit, LocalDateTime logCreated) {
+        analyzeService.checkDataForAnalysis(userDetails, characteristics, unit, logCreated);
         return ResponseEntity.ok(ApiResponse.success(analyzeService.sendAnalyzeDataToModule(userDetails, characteristics, unit, logCreated)));
     }
 
