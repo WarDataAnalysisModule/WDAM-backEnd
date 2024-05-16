@@ -47,7 +47,7 @@ public class AuthService {
         try {
             return signup(userRequestDto);
         } catch (RuntimeException e) {
-            return new ApiResponse("2000", null);
+            return new ApiResponse("600", null);
         }
     }
     @Transactional
