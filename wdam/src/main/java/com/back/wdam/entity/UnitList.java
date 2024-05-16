@@ -29,4 +29,6 @@ public class UnitList {
 
     @Enumerated(EnumType.STRING)
     private UpperUnit status;
+
+    private LocalDateTime simulationTime;
 }
