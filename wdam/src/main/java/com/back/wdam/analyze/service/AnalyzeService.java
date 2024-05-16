@@ -150,13 +150,14 @@ public class AnalyzeService {
     public void checkDataForAnalysis(UserDetails userDetails, String characteristics, String unit, LocalDateTime logCreated) {
 
         Users user = getUserByName(userDetails);
-        Optional<UnitList> unitList = unitListRepository.findByUserIdxAndUnitName(user.getUserIdx(), unit);
+        Optional<List<UnitList>> unitList = unitListRepository.findAllByUserIdxAndUnitName(user.getUserIdx(), unit);
         if(unitList.isEmpty())
             throw new CustomException(ErrorCode.UNIT_LIST_NOT_FOUND);
+        final int UNIT_LIST_INDEX = 0;
 
         if(characteristics.equals("부대 행동")) {
 
-            checkUnitBehavior(user.getUserIdx(), unitList.get().getListIdx());
+            checkUnitBehavior(user.getUserIdx(), unitList.get().get(UNIT_LIST_INDEX).getListIdx());
         }
         else {
             throw new CustomException(ErrorCode.CHARACTERISTIC_INVALID);
