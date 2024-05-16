@@ -23,6 +23,6 @@ public interface UnitListRepository extends JpaRepository<UnitList, Long> {
     @Query("SELECT u FROM UnitList u")
     List<UnitList> findAll();
 
-    @Query("SELECT u.listIdx FROM UnitList u WHERE u.users.userIdx = :userIdx AND u.unitName = :unitName")
-    long findByUserIdxAndUnitName(@Param("userIdx") Long userId, @Param("unitName") String unitName);
+    @Query("SELECT u FROM UnitList u WHERE u.users.userIdx = :userIdx AND u.unitName = :unitName")
+    Optional<UnitList> findByUserIdxAndUnitName(@Param("userIdx") Long userId, @Param("unitName") String unitName);
 }

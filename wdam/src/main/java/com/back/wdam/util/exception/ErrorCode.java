@@ -8,18 +8,21 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public enum ErrorCode {
 
-    CHARACTERISTIC_INVALID(HttpStatus.BAD_REQUEST, "400"),
+    CHARACTERISTIC_INVALID(HttpStatus.BAD_REQUEST, "300"),
 
-    //behavior 파일이 없을 경우
-    BEHAVIOR_NOT_FOUND(HttpStatus.NOT_FOUND, "404"),
-    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "404"),
-    RESULTLOG_NOT_FOUND(HttpStatus.NOT_FOUND, "404"),
+    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "400"),
+    RESULTLOG_NOT_FOUND(HttpStatus.NOT_FOUND, "401"),
+    UNIT_LIST_NOT_FOUND(HttpStatus.NOT_FOUND, "402"),
+    BEHAVIOR_NOT_FOUND(HttpStatus.NOT_FOUND, "403"),
+    EVENT_NOT_FOUND(HttpStatus.NOT_FOUND, "404"),
+    UNIT_INIT_NOT_FOUND(HttpStatus.NOT_FOUND, "405"),
+    UNIT_ATTRIBUTES_NOT_FOUND(HttpStatus.NOT_FOUND, "406"),
+    UPPER_ATTRIBUTES_NOT_FOUND(HttpStatus.NOT_FOUND, "407"),
 
-    // preprocessedData가 null일 경우
     PREPROCESSED_DATA_NULL(HttpStatus.INTERNAL_SERVER_ERROR, "500"),
-    RESULT_NOT_CREATED(HttpStatus.INTERNAL_SERVER_ERROR, "500"),
-    DATA_SAVE_FAILURE(HttpStatus.INTERNAL_SERVER_ERROR, "500"),
-    PROCESS_EXECUTION_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "500");
+    RESULT_NOT_CREATED(HttpStatus.INTERNAL_SERVER_ERROR, "501"),
+    DATA_SAVE_FAILURE(HttpStatus.INTERNAL_SERVER_ERROR, "502"),
+    PROCESS_EXECUTION_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "503");
 
     private final HttpStatus status;
     private final String code;
