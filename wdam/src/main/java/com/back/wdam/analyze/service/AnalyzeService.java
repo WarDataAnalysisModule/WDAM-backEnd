@@ -147,7 +147,7 @@ public class AnalyzeService {
         return true;
     }
 
-    private boolean checkDataForAnalysis(UserDetails userDetails, String characteristics, String unit, LocalDateTime logCreated) {
+    public void checkDataForAnalysis(UserDetails userDetails, String characteristics, String unit, LocalDateTime logCreated) {
 
         Users user = getUserByName(userDetails);
         Optional<UnitList> unitList = unitListRepository.findByUserIdxAndUnitName(user.getUserIdx(), unit);
@@ -155,6 +155,7 @@ public class AnalyzeService {
             throw new CustomException(ErrorCode.UNIT_LIST_NOT_FOUND);
 
         if(characteristics.equals("부대 행동")) {
+
             checkUnitBehavior(user.getUserIdx(), unitList.get().getListIdx());
             checkUnitInit(user.getUserIdx(), unitList.get().getListIdx());
             checkUnitAttributes(user.getUserIdx(), unitList.get().getListIdx());
@@ -163,7 +164,6 @@ public class AnalyzeService {
         else {
             throw new CustomException(ErrorCode.CHARACTERISTIC_INVALID);
         }
-        return true;
     }
 
     private Users getUserByName(UserDetails userDetails) {
@@ -174,25 +174,25 @@ public class AnalyzeService {
     }
 
     private void checkUnitBehavior(Long userIdx, Long listIdx) {
-        Optional<UnitBehavior> behavior = behaviorRepository.findByUserIdxAndListIdx(userIdx, listIdx);
+        Optional<List<UnitBehavior>> behavior = behaviorRepository.findAllByUserIdxAndListIdx(userIdx, listIdx);
         if(behavior.isEmpty())
             throw new CustomException(ErrorCode.BEHAVIOR_NOT_FOUND);
     }
 
     private void checkUnitInit(Long userIdx, Long listIdx) {
-        Optional<UnitInit> unitInit = initRepository.findByUserIdxAndListIdx(userIdx, listIdx);
+        Optional<List<UnitInit>> unitInit = initRepository.findAllByUserIdxAndListIdx(userIdx, listIdx);
         if(unitInit.isEmpty())
             throw new CustomException(ErrorCode.UNIT_INIT_NOT_FOUND);
     }
 
     private void checkUnitAttributes(Long userIdx, Long listIdx) {
-        Optional<UnitAttributes> unitAttributes = unitRepository.findByUserIdxAndListIdx(userIdx, listIdx);
+        Optional<List<UnitAttributes>> unitAttributes = unitRepository.findAllByUserIdxAndListIdx(userIdx, listIdx);
         if(unitAttributes.isEmpty())
             throw new CustomException(ErrorCode.UNIT_ATTRIBUTES_NOT_FOUND);
     }
 
     private void checkUpperAttributes(Long userIdx, Long listIdx) {
-        Optional<UpperAttributes> upperAttributes = upperRepository.findByUserIdxAndListIdx(userIdx, listIdx);
+        Optional<List<UpperAttributes>> upperAttributes = upperRepository.findAllByUserIdxAndListIdx(userIdx, listIdx);
         if(upperAttributes.isEmpty())
             throw new CustomException(ErrorCode.UPPER_ATTRIBUTES_NOT_FOUND);
     }
