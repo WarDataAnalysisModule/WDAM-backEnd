@@ -19,6 +19,10 @@ public class UnitList {
     @Column(name = "list_idx")
     private Long listIdx;
 
+    @ManyToOne
+    @JoinColumn(name = "user_idx")
+    private Users users;
+
     private Long unitId;
 
     private String unitName;

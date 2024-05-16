@@ -20,6 +20,10 @@ public class Event {
     private Long eventIdx;
 
     @ManyToOne
+    @JoinColumn(name = "user_idx")
+    private Users users;
+
+    @ManyToOne
     @JoinColumn(name = "source_list_idx")
     private UnitList sourceUnit;
 

@@ -14,10 +14,15 @@ import java.time.LocalDateTime;
 @ToString
 @Table(name = "upper_attributes")
 public class UpperAttributes {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "upper_idx")
     private Long upperIdx;
+
+    @ManyToOne
+    @JoinColumn(name = "user_idx")
+    private Users users;
 
     @ManyToOne
     @JoinColumn(name = "list_idx")
