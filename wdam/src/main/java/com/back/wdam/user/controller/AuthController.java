@@ -11,19 +11,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.List;
 
-class ResponseData<T>{
-    List<T> data=new ArrayList<>();
-
-    public void add(T item){
-        data.add(item);
-    }
-}
 
 @RestController
 @RequestMapping("/users")
@@ -46,16 +40,6 @@ public class AuthController {
 
         //response 생성
         ApiResponse apiResponse=new ApiResponse("1000", null);
-        ResponseData<String> responseData=new ResponseData<>();
-        responseData.add("grant type:");
-        responseData.add(token.getGrantType());
-        responseData.add("access token:");
-        responseData.add(token.getAccessToken());
-        responseData.add("refresh token:");
-        responseData.add(token.getRefreshToken());
-        responseData.add("AccessTokenExpiresIn:");
-        responseData.add(String.valueOf(token.getAccessTokenExpiresIn()));
-        apiResponse.setData(responseData.data);
 
         //http header에 access token 저장
         HttpHeaders httpHeaders=new HttpHeaders();
@@ -67,7 +51,7 @@ public class AuthController {
                 .domain("localhost")    // 특정 도메인에서만 사용, aws 시 수정
                 .maxAge(Duration.ofDays(7)) //쿠키 만료기간 7일
                 .build();
-        //return new ResponseEntity<>(apiResponse, httpHeaders, HttpStatus.OK);
+        apiResponse.setData(token);
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, responseCookie.toString())
                 .headers(httpHeaders)

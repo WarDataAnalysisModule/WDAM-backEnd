@@ -147,23 +147,20 @@ public class AnalyzeService {
         return true;
     }
 
-    private boolean checkDataForAnalysis(UserDetails userDetails, String characteristics, String unit, LocalDateTime logCreated) {
+    public void checkDataForAnalysis(UserDetails userDetails, String characteristics, String unit, LocalDateTime logCreated) {
 
         Users user = getUserByName(userDetails);
-        Optional<UnitList> unitList = unitListRepository.findByUserIdxAndUnitName(user.getUserIdx(), unit);
-        if(unitList.isEmpty())
+        Optional<List<UnitList>> unitList = unitListRepository.findAllByUserIdxAndUnitName(user.getUserIdx(), unit);
+        if(unitList.isEmpty() || unitList.get().isEmpty())
             throw new CustomException(ErrorCode.UNIT_LIST_NOT_FOUND);
+        final int UNIT_LIST_INDEX = 0;
 
         if(characteristics.equals("부대 행동")) {
-            checkUnitBehavior(user.getUserIdx(), unitList.get().getListIdx());
-            checkUnitInit(user.getUserIdx(), unitList.get().getListIdx());
-            checkUnitAttributes(user.getUserIdx(), unitList.get().getListIdx());
-            checkUpperAttributes(user.getUserIdx(), unitList.get().getListIdx());
+            checkUnitBehavior(user.getUserIdx(), unitList.get().get(UNIT_LIST_INDEX).getListIdx());
         }
         else {
             throw new CustomException(ErrorCode.CHARACTERISTIC_INVALID);
         }
-        return true;
     }
 
     private Users getUserByName(UserDetails userDetails) {
@@ -173,27 +170,33 @@ public class AnalyzeService {
         return users.get();
     }
 
+    private void checkEvent(Long userIdx, Long listIdx) {
+        Optional<List<Event>> event = eventRepository.findAllByUserIdxAndListIdx(userIdx, listIdx);
+        if(event.isEmpty() || event.get().isEmpty())
+            throw new CustomException(ErrorCode.EVENT_NOT_FOUND);
+    }
+
     private void checkUnitBehavior(Long userIdx, Long listIdx) {
-        Optional<UnitBehavior> behavior = behaviorRepository.findByUserIdxAndListIdx(userIdx, listIdx);
-        if(behavior.isEmpty())
+        Optional<List<UnitBehavior>> behavior = behaviorRepository.findAllByUserIdxAndListIdx(userIdx, listIdx);
+        if(behavior.isEmpty() || behavior.get().isEmpty())
             throw new CustomException(ErrorCode.BEHAVIOR_NOT_FOUND);
     }
 
     private void checkUnitInit(Long userIdx, Long listIdx) {
-        Optional<UnitInit> unitInit = initRepository.findByUserIdxAndListIdx(userIdx, listIdx);
-        if(unitInit.isEmpty())
+        Optional<List<UnitInit>> unitInit = initRepository.findAllByUserIdxAndListIdx(userIdx, listIdx);
+        if(unitInit.isEmpty() || unitInit.get().isEmpty())
             throw new CustomException(ErrorCode.UNIT_INIT_NOT_FOUND);
     }
 
     private void checkUnitAttributes(Long userIdx, Long listIdx) {
-        Optional<UnitAttributes> unitAttributes = unitRepository.findByUserIdxAndListIdx(userIdx, listIdx);
-        if(unitAttributes.isEmpty())
+        Optional<List<UnitAttributes>> unitAttributes = unitRepository.findAllByUserIdxAndListIdx(userIdx, listIdx);
+        if(unitAttributes.isEmpty() || unitAttributes.get().isEmpty())
             throw new CustomException(ErrorCode.UNIT_ATTRIBUTES_NOT_FOUND);
     }
 
     private void checkUpperAttributes(Long userIdx, Long listIdx) {
-        Optional<UpperAttributes> upperAttributes = upperRepository.findByUserIdxAndListIdx(userIdx, listIdx);
-        if(upperAttributes.isEmpty())
+        Optional<List<UpperAttributes>> upperAttributes = upperRepository.findAllByUserIdxAndListIdx(userIdx, listIdx);
+        if(upperAttributes.isEmpty() || upperAttributes.get().isEmpty())
             throw new CustomException(ErrorCode.UPPER_ATTRIBUTES_NOT_FOUND);
     }
 }
