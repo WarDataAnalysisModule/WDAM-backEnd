@@ -157,9 +157,6 @@ public class AnalyzeService {
         if(characteristics.equals("부대 행동")) {
 
             checkUnitBehavior(user.getUserIdx(), unitList.get().getListIdx());
-            checkUnitInit(user.getUserIdx(), unitList.get().getListIdx());
-            checkUnitAttributes(user.getUserIdx(), unitList.get().getListIdx());
-            checkUpperAttributes(user.getUserIdx(), unitList.get().getListIdx());
         }
         else {
             throw new CustomException(ErrorCode.CHARACTERISTIC_INVALID);
@@ -171,6 +168,12 @@ public class AnalyzeService {
         if(users.isEmpty())
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
         return users.get();
+    }
+
+    private void checkEvent(Long userIdx, Long listIdx) {
+        Optional<List<Event>> event = eventRepository.findAllByUserIdxAndListIdx(userIdx, listIdx);
+        if(event.isEmpty())
+            throw new CustomException(ErrorCode.EVENT_NOT_FOUND);
     }
 
     private void checkUnitBehavior(Long userIdx, Long listIdx) {
