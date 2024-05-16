@@ -3,6 +3,7 @@ package com.back.wdam.analyze.service;
 import com.back.wdam.analyze.dto.AnalyzeResultDto;
 import com.back.wdam.entity.ResultLog;
 import com.back.wdam.entity.Users;
+import com.back.wdam.file.repository.UnitListRepository;
 import com.back.wdam.log.repository.LogRepository;
 import com.back.wdam.user.repository.UserRepository;
 import com.back.wdam.util.exception.CustomException;
@@ -29,6 +30,7 @@ public class AnalyzeService {
 
     private final UserRepository userRepository;
     private final LogRepository logRepository;
+    private final UnitListRepository unitListRepository;
 
     public Long saveNewAnalyzeResult(UserDetails userDetails, String analysisFeature, String result, LocalDateTime logCreated) {
 
@@ -141,6 +143,21 @@ public class AnalyzeService {
         return true;
     }
 
+    private boolean checkDataForAnalysis(UserDetails userDetails, String characteristics, String unit, LocalDateTime logCreated) {
+
+        Users user = getUserByName(userDetails);
+        long listIdx = unitListRepository.findByUserIdxAndUnitName(user.getUserIdx(), unit);
+
+        if(characteristics.equals("부대 행동")) {
+
+            
+        }
+        else {
+            throw new CustomException(ErrorCode.CHARACTERISTIC_INVALID);
+        }
+
+        return true;
+    }
 
     private Users getUserByName(UserDetails userDetails) {
 

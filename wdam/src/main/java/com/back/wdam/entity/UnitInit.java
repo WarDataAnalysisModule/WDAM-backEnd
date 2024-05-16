@@ -22,6 +22,10 @@ public class UnitInit {
     private Long initIdx;
 
     @ManyToOne
+    @JoinColumn(name = "user_idx")
+    private Users users;
+
+    @ManyToOne
     @JoinColumn(name = "list_idx")
     private UnitList unitList;
 

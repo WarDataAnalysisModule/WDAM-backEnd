@@ -21,6 +21,10 @@ public class UnitBehavior {
     private Long behaviorIdx;
 
     @ManyToOne
+    @JoinColumn(name = "user_idx")
+    private Users users;
+
+    @ManyToOne
     @JoinColumn(name = "list_idx")
     private UnitList unitList;
 

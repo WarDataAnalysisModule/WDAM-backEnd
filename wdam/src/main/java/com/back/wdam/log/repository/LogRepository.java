@@ -16,6 +16,6 @@ public interface LogRepository extends JpaRepository<ResultLog, Long> {
     @Transactional
     ResultLog saveAndFlush(ResultLog resultLog);
 
-    @Query("SELECT r FROM ResultLog r WHERE r.users.userIdx = :userIdx AND r.logCreated = :logCreated ORDER BY r.createdAt DESC")
+    @Query("SELECT r FROM ResultLog r WHERE r.users.userIdx = :userIdx AND r.logCreated = :logCreated ORDER BY r.createdAt ASC")
     List<ResultLog> findByUserIdAndLogCreated(@Param("userIdx") Long userId, @Param("logCreated") LocalDateTime logCreated);
 }

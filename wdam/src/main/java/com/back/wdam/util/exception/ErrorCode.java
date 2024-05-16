@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public enum ErrorCode {
 
+    CHARACTERISTIC_INVALID(HttpStatus.BAD_REQUEST, "400"),
+
     //behavior 파일이 없을 경우
     BEHAVIOR_NOT_FOUND(HttpStatus.NOT_FOUND, "404"),
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "404"),

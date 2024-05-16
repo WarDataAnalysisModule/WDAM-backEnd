@@ -21,6 +21,10 @@ public class UnitAttributes {
     private Long attributesIdx;
 
     @ManyToOne
+    @JoinColumn(name = "user_idx")
+    private Users users;
+
+    @ManyToOne
     @JoinColumn(name = "list_idx")
     private UnitList unitList;
 
@@ -36,7 +40,7 @@ public class UnitAttributes {
 
     private Double positionLat;
 
-    private Double positionOn;
+    private Double positionLon;
 
     private Double positionAlt;
 
@@ -68,7 +72,7 @@ public class UnitAttributes {
         this.forceIdentifier = unitDto.getForceIdentifier();
         this.entitySymbol = unitDto.getEntitySymbol();
         this.positionLat = unitDto.getPositionLat();
-        this.positionOn = unitDto.getPositionOn();
+        this.positionLon = unitDto.getPositionOn();
         this.positionAlt = unitDto.getPositionAlt();
         this.orientation = unitDto.getOrientation();
         this.speed = unitDto.getSpeed();
