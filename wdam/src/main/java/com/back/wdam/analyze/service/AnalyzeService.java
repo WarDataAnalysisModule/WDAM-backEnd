@@ -151,12 +151,11 @@ public class AnalyzeService {
 
         Users user = getUserByName(userDetails);
         Optional<List<UnitList>> unitList = unitListRepository.findAllByUserIdxAndUnitName(user.getUserIdx(), unit);
-        if(unitList.isEmpty())
+        if(unitList.isEmpty() || unitList.get().isEmpty())
             throw new CustomException(ErrorCode.UNIT_LIST_NOT_FOUND);
         final int UNIT_LIST_INDEX = 0;
 
         if(characteristics.equals("부대 행동")) {
-
             checkUnitBehavior(user.getUserIdx(), unitList.get().get(UNIT_LIST_INDEX).getListIdx());
         }
         else {
@@ -173,31 +172,31 @@ public class AnalyzeService {
 
     private void checkEvent(Long userIdx, Long listIdx) {
         Optional<List<Event>> event = eventRepository.findAllByUserIdxAndListIdx(userIdx, listIdx);
-        if(event.isEmpty())
+        if(event.isEmpty() || event.get().isEmpty())
             throw new CustomException(ErrorCode.EVENT_NOT_FOUND);
     }
 
     private void checkUnitBehavior(Long userIdx, Long listIdx) {
         Optional<List<UnitBehavior>> behavior = behaviorRepository.findAllByUserIdxAndListIdx(userIdx, listIdx);
-        if(behavior.isEmpty())
+        if(behavior.isEmpty() || behavior.get().isEmpty())
             throw new CustomException(ErrorCode.BEHAVIOR_NOT_FOUND);
     }
 
     private void checkUnitInit(Long userIdx, Long listIdx) {
         Optional<List<UnitInit>> unitInit = initRepository.findAllByUserIdxAndListIdx(userIdx, listIdx);
-        if(unitInit.isEmpty())
+        if(unitInit.isEmpty() || unitInit.get().isEmpty())
             throw new CustomException(ErrorCode.UNIT_INIT_NOT_FOUND);
     }
 
     private void checkUnitAttributes(Long userIdx, Long listIdx) {
         Optional<List<UnitAttributes>> unitAttributes = unitRepository.findAllByUserIdxAndListIdx(userIdx, listIdx);
-        if(unitAttributes.isEmpty())
+        if(unitAttributes.isEmpty() || unitAttributes.get().isEmpty())
             throw new CustomException(ErrorCode.UNIT_ATTRIBUTES_NOT_FOUND);
     }
 
     private void checkUpperAttributes(Long userIdx, Long listIdx) {
         Optional<List<UpperAttributes>> upperAttributes = upperRepository.findAllByUserIdxAndListIdx(userIdx, listIdx);
-        if(upperAttributes.isEmpty())
+        if(upperAttributes.isEmpty() || upperAttributes.get().isEmpty())
             throw new CustomException(ErrorCode.UPPER_ATTRIBUTES_NOT_FOUND);
     }
 }
