@@ -32,16 +32,14 @@ public class UserService {
     }
 
     public void modifyUser(UserDetails userDetails, UserInfoDto userInfoDto){
-        System.out.println(userInfoDto);
         Optional<Users> user = userRepository.findByUserName(userDetails.getUsername());
         if(user.isEmpty()) throw new CustomException(ErrorCode.USER_NOT_FOUND);
 
-
         Long userIdx = user.get().getUserIdx();
 
-        //비밀 번호 수정 시, 암호화해서
-        userRepository.updateByUserIdx(userInfoDto.getUserName(), passwordEncoder.encode(userInfoDto.getPassword()),
+        if(userInfoDto.getPassword()==null) userRepository.updateByUserIdx(userInfoDto.getUserName(),
+                userInfoDto.getPhone(), userInfoDto.getEmail(), userIdx);
+        else userRepository.updateByUserIdx(userInfoDto.getUserName(), passwordEncoder.encode(userInfoDto.getPassword()),
                      userInfoDto.getPhone(), userInfoDto.getEmail(), userIdx);
-
     }
 }
