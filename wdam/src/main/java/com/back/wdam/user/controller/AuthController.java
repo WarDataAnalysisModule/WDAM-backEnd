@@ -2,6 +2,7 @@ package com.back.wdam.user.controller;
 
 import com.back.wdam.user.dto.LoginDto;
 import com.back.wdam.user.dto.TokenDto;
+import com.back.wdam.user.dto.TokenRequestDto;
 import com.back.wdam.user.dto.UserRequestDto;
 import com.back.wdam.user.jwt.JwtFilter;
 import com.back.wdam.user.service.AuthService;
@@ -50,6 +51,7 @@ public class AuthController {
                 .secure(true)   // https 요청으로만 쿠키 주고받기 가능
                 .domain("localhost")    // 특정 도메인에서만 사용, aws 시 수정
                 .maxAge(Duration.ofDays(7)) //쿠키 만료기간 7일
+                .sameSite("None") // 크로스 사이트 요청에서 쿠키를 허용
                 .build();
         apiResponse.setData(token);
         return ResponseEntity.ok()
@@ -58,5 +60,23 @@ public class AuthController {
                 .body(apiResponse);
     }
 
-    
+    @PostMapping("/reissue")
+    public ResponseEntity<ApiResponse> reissue(@RequestBody TokenRequestDto tokenRequestDto) {
+        ApiResponse apiResponse=new ApiResponse("1000",null);
+        TokenDto token=authService.reissue(tokenRequestDto);
+        apiResponse.setData(token);
+        HttpHeaders httpHeaders=new HttpHeaders();
+        httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER,"Bearer"+token.getAccessToken());
+        ResponseCookie responseCookie=ResponseCookie.from("refreshToken", token.getRefreshToken())
+                .httpOnly(true) // 쿠키 탈취 방지
+                .secure(true)   // https 요청으로만 쿠키 주고받기 가능
+                .domain("localhost")    // 특정 도메인에서만 사용, aws 시 수정
+                .maxAge(Duration.ofDays(7)) //쿠키 만료기간 7일
+                .sameSite("None") // 크로스 사이트 요청에서 쿠키를 허용
+                .build();
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, responseCookie.toString())
+                .headers(httpHeaders)
+                .body(apiResponse);
+    }
 }
