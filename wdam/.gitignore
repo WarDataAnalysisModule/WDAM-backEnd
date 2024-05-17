@@ -23,6 +23,7 @@ bin/
 
 ### IntelliJ IDEA ###
 application.properties
+application-real.properties
 .idea
 *.iws
 *.iml

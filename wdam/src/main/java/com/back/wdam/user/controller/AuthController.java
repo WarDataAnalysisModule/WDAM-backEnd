@@ -45,6 +45,8 @@ public class AuthController {
         //http header에 access token 저장
         HttpHeaders httpHeaders=new HttpHeaders();
         httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER,"Bearer"+token.getAccessToken());
+        //http header에 refresh token 저장
+        httpHeaders.set("refreshToken",token.getRefreshToken());
         //cookie에 refresh token 저장
         ResponseCookie responseCookie=ResponseCookie.from("refreshToken", token.getRefreshToken())
                 .httpOnly(true) // 쿠키 탈취 방지
@@ -67,6 +69,8 @@ public class AuthController {
         apiResponse.setData(token);
         HttpHeaders httpHeaders=new HttpHeaders();
         httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER,"Bearer"+token.getAccessToken());
+        //http header에 refresh token 저장
+        httpHeaders.set("refreshToken",token.getRefreshToken());
         ResponseCookie responseCookie=ResponseCookie.from("refreshToken", token.getRefreshToken())
                 .httpOnly(true) // 쿠키 탈취 방지
                 .secure(true)   // https 요청으로만 쿠키 주고받기 가능

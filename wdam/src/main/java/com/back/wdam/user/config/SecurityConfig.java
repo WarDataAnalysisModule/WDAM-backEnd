@@ -40,7 +40,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource configurationSource () {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(true);
+        config.setAllowCredentials(false);
         config.setAllowedOrigins(Arrays.asList("*"));
         config.setAllowedMethods(Arrays.asList("POST", "GET", "PUT", "DELETE","PATCH"));
         config.setAllowedHeaders(Arrays.asList("*"));
@@ -90,14 +90,6 @@ public class SecurityConfig {
 
                 )
                 .with(new JwtSecurityConfig(tokenProvider), customizer -> {})
-//                .formLogin((formLogin) -> formLogin
-//                        .loginPage("/users/login")  //로그인하는 페이지
-//                        .defaultSuccessUrl("/")    //로그인 성공 시 이동하는 페이지
-//                        .failureUrl("/users/login")    // 로그인 실패 시
-//                )
-//                .logout((logout) -> logout
-//                        .logoutRequestMatcher(new AntPathRequestMatcher("/users/logout")) //로그아웃하는 페이지
-//                        .logoutSuccessUrl("/users/login")) //로그아웃 성공 시 이동하는 페이지
         ;
 
         return http.build();
