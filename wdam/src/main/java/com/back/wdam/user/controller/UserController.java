@@ -29,7 +29,6 @@ public class UserController {
 
     //마이페이지 수정
     @PatchMapping("/users/update")
-    @CrossOrigin(origins = "*", methods = RequestMethod.PATCH)
     public ResponseEntity<ApiResponse<MypageDto>> modifyUser(@AuthenticationPrincipal UserDetails userDetails, @RequestBody UserInfoDto userInfoDto){
 
         userService.modifyUser(userDetails, userInfoDto);
