@@ -46,9 +46,7 @@ public class FileService {
             upperRepository.saveAndFlush(new UpperAttributes(newUnit, upperDto));
         }
         else{
-            if(unitList.get().getUnitName().contains("데이터 부재")){ //simulationTime column도 비교해야 함
-                //simulationTime이 달라지면 unitList의 unitId가 같아도 unitName아 다를 수 있지 않나? - 다른 전투느낌으로
-                //근데 simulationTime이 초까지 나와 있는데, 어느 정도까지 다르다고 봐야 아예 다른 전투(?)라고 봐야 하나
+            if(unitList.get().getUnitName().contains("데이터 부재")){
                 unitListRepository.updateByUnitId(upperDto.getUnitName(), String.valueOf(UpperUnit.UPPER), id);
                 unitList = unitListRepository.findByUnitId(id, userIdx, dateTime);
             }

@@ -1,6 +1,5 @@
 package com.back.wdam.file.controller;
 
-import com.back.wdam.entity.UnitInit;
 import com.back.wdam.file.dto.*;
 import com.back.wdam.file.service.FileService;
 import com.back.wdam.util.ApiResponse;
@@ -412,8 +411,6 @@ public class FileController {
         //ListDto listDto = new ListDto();
         //listDto.setSimulationTime(SimulationTime);
         //listDto.setUnitList(list);
-
-        //db에 저장된 유저의 모든 simulationTime을 반환해야 하는지, 아니면 현재 업로드한 파일들의 simulationTime만 반환하면 되는지
 
         simulationTimes = fileService.getSimulationTimes(userDetails, simulationTimes);
         List<LocalDateTime> result = new ArrayList<>();

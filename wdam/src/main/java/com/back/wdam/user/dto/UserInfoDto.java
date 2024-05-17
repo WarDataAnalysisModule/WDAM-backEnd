@@ -1,5 +1,6 @@
 package com.back.wdam.user.dto;
 
+import jakarta.annotation.Nullable;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -9,6 +10,7 @@ import lombok.ToString;
 @ToString
 public class UserInfoDto {
     private String userName;
+    @Nullable
     private String password;
     private String email;
     private String phone;
