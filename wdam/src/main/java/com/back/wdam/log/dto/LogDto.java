@@ -18,8 +18,10 @@ public class LogDto {
 
         this.logResults = logResults;
         this.unitList = new ArrayList<>();
-        for(UnitList unitName : unitLists) {
-            this.unitList.add(unitName.getUnitName());
+        if(unitLists != null) {
+            for(UnitList unitName : unitLists) {
+                this.unitList.add(unitName.getUnitName());
+            }
         }
     }
 }
