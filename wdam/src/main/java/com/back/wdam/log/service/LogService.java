@@ -34,19 +34,20 @@ public class LogService {
         Users user = getUserByName(userDetails);
 
         List<ResultLog> resultLogs = logRepository.findByUserIdAndLogCreated(user.getUserIdx(), logCreated);
-        if(resultLogs.isEmpty())
-            throw new CustomException(ErrorCode.RESULTLOG_NOT_FOUND);
-
         List<LogResultDto> logResultDtos = new ArrayList<>();
-        for (ResultLog resultLog : resultLogs) {
-            logResultDtos.add(new LogResultDto(resultLog));
+        if(!resultLogs.isEmpty()) {
+            for (ResultLog resultLog : resultLogs) {
+                logResultDtos.add(new LogResultDto(resultLog));
+            }
         }
 
         Optional<List<UnitList>> unitList = unitListRepository.findAllByUserIdxAndLogCreated(user.getUserIdx(), logCreated);
+        LogDto logDto;
         if(unitList.isEmpty() || unitList.get().isEmpty())
-            throw new CustomException(ErrorCode.UNIT_LIST_NOT_FOUND);
+            logDto = new LogDto(null, logResultDtos);
+        else
+            logDto = new LogDto(unitList.get(), logResultDtos);
 
-        LogDto logDto = new LogDto(unitList.get(), logResultDtos);
         return logDto;
     }
 
