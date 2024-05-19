@@ -1,3 +1,29 @@
+import subprocess
+import sys
+
+def install_package(package):
+    subprocess.check_call([sys.executable, "-m", "pip", "install", package])
+
+# 필요한 패키지 목록
+required_packages = [
+    "mysql-connector-python",
+    "pandas",
+    "openai"
+]
+
+# 패키지 설치
+for package in required_packages:
+    try:
+        __import__(package)
+    except ImportError:
+        install_package(package)
+
+# -*- coding: utf-8 -*-
+import mysql.connector
+import pandas as pd     # Chat GPT에게 넘겨주기 위해 데이터프레임->텍스트로 변환
+import os
+import openai
+import sys
 
 """
 brief: 데이터베이스와 연결
@@ -41,9 +67,6 @@ def Extract_UnitBehavior(id, cursor):
     cursor.execute(query, (id,))
     result=cursor.fetchall()
 
-    # Chat GPT에게 넘겨주기 위해 데이터프레임->텍스트로 변환
-    import pandas as pd
-
     # 추출한 데이터로부터 데이터프레임 생성
     dataframe=pd.DataFrame(result, columns=['SimulationTime', 'BehaviorName', 'Status'])
 
@@ -86,12 +109,8 @@ def DatabaseDeconnect(conn, cursor):
 
 ###################################################################################################
 
-# -*- coding: utf-8 -*-
-import sys
-
 if __name__ == "__main__":
 
-    import mysql.connector
     conn, cursor=DatabaseConnect()
 
     if len(sys.argv) > 2:
@@ -107,8 +126,6 @@ if __name__ == "__main__":
     DatabaseDeconnect(conn, cursor)
 
     # ChatGPT Connect
-    import os
-    import openai
     os.environ.get('OPENAI_API_KEY') is None
     os.environ["OPENAI_API_KEY"] = 'sk-'    # 실행 시 api 를 입력하세요.
     openai.api_key = os.getenv("OPENAI_API_KEY")
