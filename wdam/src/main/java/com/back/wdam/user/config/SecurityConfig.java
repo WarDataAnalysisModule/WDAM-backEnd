@@ -40,12 +40,13 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource configurationSource () {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(false);
-        config.setAllowedOrigins(Arrays.asList("*"));
+        config.setAllowCredentials(true);
+        config.addAllowedOriginPattern("*");
         config.setAllowedMethods(Arrays.asList("POST", "GET", "PUT", "DELETE", "PATCH"));
         config.setAllowedHeaders(Arrays.asList("*"));
         config.setMaxAge(3600 * 6L);
         config.addExposedHeader("Authorization");
+        config.addExposedHeader("refreshToken");
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
@@ -74,7 +75,13 @@ public class SecurityConfig {
                 .sessionManagement(httpSecuritySessionManagementConfigurer -> httpSecuritySessionManagementConfigurer
                                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)) //세션 사용 X
                 .authorizeHttpRequests((authorizeRequests) -> authorizeRequests
-                        //인증 불필요
+                        //프론트엔드 빌드 파일들 인증 불필요
+                        .requestMatchers(new AntPathRequestMatcher("/")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/static/**")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/index.html")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/favicon.ico")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/manifest.json")).permitAll()
+                        //회원가입과 로그인은 인증 불필요
                         .requestMatchers(new AntPathRequestMatcher("/users/signup")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/users/login")).permitAll()
                         //인증 필요
@@ -89,17 +96,6 @@ public class SecurityConfig {
 
                 )
                 .with(new JwtSecurityConfig(tokenProvider), customizer -> {})
-                // 프론트 연결 시 로그인, 로그아웃 페이지 연결
-//                .formLogin((formLogin) -> formLogin
-//                        .loginPage("/users/login")  //로그인 페이지
-//                        .defaultSuccessUrl("/")    //로그인 성공 시 이동하는 페이지
-//                        .failureUrl("/loginfail")    // 로그인 실패 시
-//                )
-//                .logout((logout) -> logout
-//                        .logoutRequestMatcher(new AntPathRequestMatcher("/user/logout"))
-//                        .logoutSuccessUrl("/")
-//                        .invalidateHttpSession(true))
-
         ;
 
         return http.build();
