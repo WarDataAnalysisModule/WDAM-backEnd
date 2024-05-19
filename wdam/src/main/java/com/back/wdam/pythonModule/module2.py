@@ -32,7 +32,6 @@ if __name__ == "__main__":
     else:
         print("인자 전달 개수 이상")
 
-
     if characteristic == "부대 행동":
         messages = [
             {"role": "system", "content": "당신은 주어진 데이터를 분석해야 합니다."},
