@@ -25,6 +25,7 @@ bin/
 application.properties
 application-real.properties
 .idea/
+*.idea
 *.iws
 *.iml
 *.ipr
