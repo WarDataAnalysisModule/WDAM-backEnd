@@ -1,6 +1,7 @@
 package com.back.wdam.file.repository;
 
 import com.back.wdam.entity.UnitList;
+import com.back.wdam.enums.UpperUnit;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -18,7 +19,7 @@ public interface UnitListRepository extends JpaRepository<UnitList, Long> {
 
     @Modifying
     @Query("update UnitList u set u.unitName = :unitName, u.status = :status where u.unitId = :unitId")
-    void updateByUnitId(@Param("unitName") String unitName, @Param("status") String status, @Param("unitId") Long unitId);
+    void updateByUnitId(@Param("unitName") String unitName, @Param("status") UpperUnit status, @Param("unitId") Long unitId);
 
     @Query("SELECT u FROM UnitList u")
     List<UnitList> findAll();

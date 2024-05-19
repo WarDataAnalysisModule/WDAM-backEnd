@@ -43,6 +43,7 @@ public class UpperAttributes {
     private LocalDateTime createdAt;
 
     public UpperAttributes(UnitList newUnit, UpperDto upperDto) {
+        this.users = newUnit.getUsers();
         this.unitList = newUnit;
         this.simulationTime = upperDto.getSimulationTime();
         this.unitName = upperDto.getUnitName();

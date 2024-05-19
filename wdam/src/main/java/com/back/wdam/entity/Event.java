@@ -56,6 +56,7 @@ public class Event {
     private LocalDateTime createdAt;
 
     public Event(UnitList sourceUnit, UnitList targetUnit, EventDto eventDto) {
+        this.users = sourceUnit.getUsers();
         this.sourceUnit = sourceUnit;
         this.targetUnit = targetUnit;
         this.simulationTime = eventDto.getSimulationTime();
