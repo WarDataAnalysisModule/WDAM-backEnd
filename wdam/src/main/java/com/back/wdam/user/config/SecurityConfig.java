@@ -40,12 +40,13 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource configurationSource () {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(false);
-        config.setAllowedOrigins(Arrays.asList("*"));
-        config.setAllowedMethods(Arrays.asList("POST", "GET", "PUT", "DELETE","PATCH"));
+        config.setAllowCredentials(true);
+        config.addAllowedOriginPattern("*");
+        config.setAllowedMethods(Arrays.asList("POST", "GET", "PUT", "DELETE", "PATCH"));
         config.setAllowedHeaders(Arrays.asList("*"));
         config.setMaxAge(3600 * 6L);
         config.addExposedHeader("Authorization");
+        config.addExposedHeader("refreshToken");
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
@@ -74,10 +75,15 @@ public class SecurityConfig {
                 .sessionManagement(httpSecuritySessionManagementConfigurer -> httpSecuritySessionManagementConfigurer
                                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)) //세션 사용 X
                 .authorizeHttpRequests((authorizeRequests) -> authorizeRequests
-                        //인증 불필요
+                        //프론트엔드 빌드 파일들 인증 불필요
+                        .requestMatchers(new AntPathRequestMatcher("/")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/static/**")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/index.html")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/favicon.ico")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/manifest.json")).permitAll()
+                        //회원가입과 로그인은 인증 불필요
                         .requestMatchers(new AntPathRequestMatcher("/users/signup")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/users/login")).permitAll()
-                        .requestMatchers(new AntPathRequestMatcher("/users/reissue")).permitAll()
                         //인증 필요
                         .requestMatchers(new AntPathRequestMatcher("/users/update")).authenticated()
                         .requestMatchers(new AntPathRequestMatcher("/users/logout")).authenticated()
