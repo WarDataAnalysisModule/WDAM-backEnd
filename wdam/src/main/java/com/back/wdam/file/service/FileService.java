@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.cglib.core.Local;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -47,7 +48,7 @@ public class FileService {
         }
         else{
             if(unitList.get().getUnitName().contains("데이터 부재")){
-                unitListRepository.updateByUnitId(upperDto.getUnitName(), String.valueOf(UpperUnit.UPPER), id);
+                unitListRepository.updateByUnitId(upperDto.getUnitName(), UpperUnit.UPPER, id);
                 unitList = unitListRepository.findByUnitId(id, userIdx, dateTime);
             }
             upperRepository.saveAndFlush(new UpperAttributes(unitList.get(), upperDto));
@@ -72,7 +73,7 @@ public class FileService {
         }
         else{
             if(unitList.get().getUnitName().contains("데이터 부재")){
-                unitListRepository.updateByUnitId(unitDto.getUnitName(), String.valueOf(UpperUnit.UNIT), id);
+                unitListRepository.updateByUnitId(unitDto.getUnitName(), UpperUnit.UNIT, id);
                 unitList = unitListRepository.findByUnitId(id, userIdx, dateTime);
             }
             unitRepository.saveAndFlush(new UnitAttributes(unitList.get(), unitDto));
@@ -90,14 +91,13 @@ public class FileService {
             newUnit.setUnitName(initDto.getUnitName());
             newUnit.setSimulationTime(dateTime);
             newUnit.setStatus(UpperUnit.UNIT);
-
             unitListRepository.saveAndFlush(newUnit);
 
             initRepository.saveAndFlush(new UnitInit(newUnit, initDto));
         }
         else{
             if(unitList.get().getUnitName().contains("데이터 부재")){
-                unitListRepository.updateByUnitId(initDto.getUnitName(), String.valueOf(UpperUnit.UNIT), id);
+                unitListRepository.updateByUnitId(initDto.getUnitName(), UpperUnit.UNIT, id);
                 unitList = unitListRepository.findByUnitId(id, userIdx, dateTime);
             }
             initRepository.saveAndFlush(new UnitInit(unitList.get(), initDto));

@@ -65,6 +65,7 @@ public class UnitAttributes {
     private LocalDateTime createdAt;
 
     public UnitAttributes(UnitList newUnit, UnitDto unitDto) {
+        this.users = newUnit.getUsers();
         this.unitList = newUnit;
         this.simulationTime = unitDto.getSimulationTime();
         this.unitName = unitDto.getUnitName();

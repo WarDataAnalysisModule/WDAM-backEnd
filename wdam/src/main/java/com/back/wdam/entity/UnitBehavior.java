@@ -37,6 +37,7 @@ public class UnitBehavior {
     private LocalDateTime createdAt;
 
     public UnitBehavior(UnitList unitList, BehaviorDto behaviorDto){
+        this.users = unitList.getUsers();
         this.unitList = unitList;
         this.simulationTime = behaviorDto.getSimulationTime();
         this.behaviorName = behaviorDto.getBehaviorName();

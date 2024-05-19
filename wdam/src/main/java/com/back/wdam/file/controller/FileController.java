@@ -25,30 +25,6 @@ public class FileController {
 
     private final FileService fileService;
 
-//    static class CustomComparator implements Comparator<UnitListDto> {
-//        @Override
-//        public int compare(UnitListDto u1, UnitListDto u2) {
-//
-////            if(u1.getUnitName()==null && u2.getUnitName()!=null) return -1;
-////            else if(u1.getUnitName()!=null && u2.getUnitName()==null) return 1;
-////            else if(u1.getUnitName()==null && u2.getUnitName()==null) return 0;
-//
-//            String[] parts1 = u1.getUnitName().split("-");
-//            String[] parts2 = u2.getUnitName().split("-");
-//
-//            // 각 세그먼트별로 비교
-//            for (int i = 0; i < Math.min(parts1.length, parts2.length); i++) {
-//                int segmentComparison = parts1[i].compareTo(parts2[i]);
-//                if (segmentComparison != 0) {
-//                    return segmentComparison;
-//                }
-//            }
-//
-//            // 모든 세그먼트가 같으면 길이로 비교
-//            return Integer.compare(parts1.length, parts2.length);
-//        }
-//    }
-
     //이 세 파일의 id는 단위부대 id
     //단위부대init_20230116174254.csv
     //단위부대Attributes_#단위부대ID_20230116174254.csv
@@ -72,11 +48,6 @@ public class FileController {
 
         Set<LocalDateTime> simulationTimes = new HashSet<>();
 
-        //1. 날짜 분류 - 애초에 DB에 simulationTime 저장되어서 구분 가능 - ok
-        //2. '유저'의 모든 simulationTime 반환
-        //unitList에 unitName을 알 수 없다면, 임의로 저장  ex) "데이터 부재(id: 2)" - ok
-        //일단 파일 받는대로 파일의 내용은 전부 저장 - ok
-        //user도 테이블에 저장해야 함 - ok
 
         if(uppers != null) {
             for(MultipartFile upper: uppers){
@@ -212,7 +183,6 @@ public class FileController {
 
 
         if(inits != null) { //단위부대init_20230116174254.csv
-
             for(MultipartFile init: inits){
                 String name = init.getOriginalFilename();
                 String date = name.replaceAll("[^0-9]", ""); // 파일 이름에서 시간 부분만 추출
@@ -267,7 +237,6 @@ public class FileController {
         }
 
         if(behaviors != null){
-
             for(MultipartFile behavior: behaviors){
                 String fileName = behavior.getOriginalFilename();
                 String datePart = fileName.replaceAll("[^0-9]", ""); // 파일 이름에서 시간 부분만 추출
@@ -321,7 +290,6 @@ public class FileController {
         }
 
         if(events != null){ //Event_20230116174254.csv
-
             for(MultipartFile event: events){
                 String fileName = event.getOriginalFilename();
                 String datePart = fileName.replaceAll("[^0-9]", ""); // 파일 이름에서 시간 부분만 추출
@@ -403,14 +371,6 @@ public class FileController {
                 }
             }
         }
-
-        //List<UnitListDto> list = fileService.getUnitList();
-
-        // 커스텀 Comparator를 사용하여 리스트 정렬
-        //Collections.sort(list, new CustomComparator());
-        //ListDto listDto = new ListDto();
-        //listDto.setSimulationTime(SimulationTime);
-        //listDto.setUnitList(list);
 
         simulationTimes = fileService.getSimulationTimes(userDetails, simulationTimes);
         List<LocalDateTime> result = new ArrayList<>();

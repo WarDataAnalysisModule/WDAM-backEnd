@@ -45,12 +45,14 @@ public class UnitInit {
 
     public UnitInit(UnitList newUnit, InitDto initDto) {
         this.unitList = newUnit;
+        this.users = newUnit.getUsers();
         this.unitName = initDto.getUnitName();
+        this.symbol = initDto.getSymbol();
         this.status = initDto.getStatus();
         this.member = initDto.getMember();
         this.equipment = initDto.getEquipment();
         this.supply = initDto.getSupply();
-        this.createdAt = getCreatedAt();
+        this.createdAt = initDto.getCreatedAt();
     }
 
     public UnitInit() {
