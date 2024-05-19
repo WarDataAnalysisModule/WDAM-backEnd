@@ -20,6 +20,7 @@ public interface BehaviorRepository extends JpaRepository<UnitBehavior, Long> {
     void saveBehavior(@Param("unitId") Integer unitId, @Param("simulationTime") Integer simulationTime, @Param("behaviorName") String behaviorName, @Param("status") String status, @Param("createdAt")LocalDateTime createdAt);
 
     List<UnitBehavior> findByUsers(Users user);
-    @Query("SELECT b FROM UnitBehavior b WHERE b.users.userIdx = :userIdx AND b.unitList.listIdx = :listIdx")
-    Optional<List<UnitBehavior>> findAllByUserIdxAndListIdx(@Param("userIdx") Long userIdx, @Param("listIdx") Long listIdx);
+
+    @Query("SELECT b FROM UnitBehavior b WHERE b.users.userIdx = :userIdx AND b.unitList.listIdx = :listIdx AND b.createdAt = :createdAt")
+    Optional<List<UnitBehavior>> findAllByUserIdxAndListIdxAndSimulationTime(@Param("userIdx") Long userIdx, @Param("listIdx") Long listIdx, @Param("createdAt") LocalDateTime createdAt);
 }

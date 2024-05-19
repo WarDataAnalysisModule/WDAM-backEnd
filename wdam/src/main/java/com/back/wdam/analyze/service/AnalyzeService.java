@@ -150,13 +150,14 @@ public class AnalyzeService {
     public void checkDataForAnalysis(UserDetails userDetails, String characteristics, String unit, LocalDateTime logCreated) {
 
         Users user = getUserByName(userDetails);
-        Optional<List<UnitList>> unitList = unitListRepository.findAllByUserIdxAndUnitName(user.getUserIdx(), unit);
-        if(unitList.isEmpty() || unitList.get().isEmpty())
+        Optional<UnitList> unitList = unitListRepository.findByUserIdxAndUnitNameAndLogCreated(user.getUserIdx(), unit, logCreated);
+        if(unitList.isEmpty()) {
             throw new CustomException(ErrorCode.UNIT_LIST_NOT_FOUND);
-        final int UNIT_LIST_INDEX = 0;
+        }
+        //final int UNIT_LIST_INDEX = 0;
 
         if(characteristics.equals("부대 행동")) {
-            checkUnitBehavior(user.getUserIdx(), unitList.get().get(UNIT_LIST_INDEX).getListIdx());
+            checkUnitBehavior(user.getUserIdx(), unitList.get().getListIdx(), logCreated);
         }
         else {
             throw new CustomException(ErrorCode.CHARACTERISTIC_INVALID);
@@ -176,8 +177,8 @@ public class AnalyzeService {
             throw new CustomException(ErrorCode.EVENT_NOT_FOUND);
     }
 
-    private void checkUnitBehavior(Long userIdx, Long listIdx) {
-        Optional<List<UnitBehavior>> behavior = behaviorRepository.findAllByUserIdxAndListIdx(userIdx, listIdx);
+    private void checkUnitBehavior(Long userIdx, Long listIdx, LocalDateTime createdAt) {
+        Optional<List<UnitBehavior>> behavior = behaviorRepository.findAllByUserIdxAndListIdxAndSimulationTime(userIdx, listIdx, createdAt);
         if(behavior.isEmpty() || behavior.get().isEmpty())
             throw new CustomException(ErrorCode.BEHAVIOR_NOT_FOUND);
     }
