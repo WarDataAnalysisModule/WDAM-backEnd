@@ -75,6 +75,8 @@ public class SecurityConfig {
                 .sessionManagement(httpSecuritySessionManagementConfigurer -> httpSecuritySessionManagementConfigurer
                                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)) //세션 사용 X
                 .authorizeHttpRequests((authorizeRequests) -> authorizeRequests
+                        //예외처리된 요청 결과에 대해 401 대신 제대로 된 결과를 보내도록
+                        .requestMatchers(new AntPathRequestMatcher("/error")).permitAll()
                         //프론트엔드 빌드 파일들 인증 불필요
                         .requestMatchers(new AntPathRequestMatcher("/")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/static/**")).permitAll()
