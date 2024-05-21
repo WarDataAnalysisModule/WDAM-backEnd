@@ -37,9 +37,8 @@ public class UserService {
 
         Long userIdx = user.get().getUserIdx();
 
-        if(userInfoDto.getPassword()==null) userRepository.updateByUserIdx(userInfoDto.getUserName(),
-                userInfoDto.getPhone(), userInfoDto.getEmail(), userIdx);
-        else userRepository.updateByUserIdx(userInfoDto.getUserName(), passwordEncoder.encode(userInfoDto.getPassword()),
+        if(userInfoDto.getPassword()==null) userRepository.updateByUserIdx(userInfoDto.getPhone(), userInfoDto.getEmail(), userIdx);
+        else userRepository.updateByUserIdx(passwordEncoder.encode(userInfoDto.getPassword()),
                      userInfoDto.getPhone(), userInfoDto.getEmail(), userIdx);
     }
 }
