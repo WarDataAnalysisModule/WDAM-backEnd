@@ -9,7 +9,6 @@ import lombok.ToString;
 @Setter
 @ToString
 public class UserInfoDto {
-    private String userName;
     @Nullable
     private String password;
     private String email;
