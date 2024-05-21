@@ -24,8 +24,7 @@ bin/
 ### IntelliJ IDEA ###
 application.properties
 application-real.properties
-.idea/
-*.idea
+.idea
 *.iws
 *.iml
 *.ipr
