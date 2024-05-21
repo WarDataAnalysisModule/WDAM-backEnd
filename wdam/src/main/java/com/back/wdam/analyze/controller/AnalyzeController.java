@@ -25,8 +25,8 @@ public class AnalyzeController {
         return ResponseEntity.ok(ApiResponse.success(analyzeService.sendAnalyzeDataToModule(userDetails, characteristics, unit, logCreated)));
     }
 
-    @GetMapping("/result")
-    ResponseEntity<ApiResponse<List<AnalyzeResultDto>>> getAnalyzeResult(@AuthenticationPrincipal UserDetails userDetails, @RequestParam LocalDateTime logCreated) {
+    @PostMapping("/result")
+    ResponseEntity<ApiResponse<List<AnalyzeResultDto>>> getAnalyzeResult(@AuthenticationPrincipal UserDetails userDetails, @RequestParam("logCreated") LocalDateTime logCreated) {
         return ResponseEntity.ok(ApiResponse.success(analyzeService.getAnalyzeResults(userDetails, logCreated)));
     }
 }
