@@ -1,10 +1,7 @@
 package com.back.wdam.user.config;
 
 
-import com.back.wdam.user.jwt.JwtAccessDeniedHandler;
-import com.back.wdam.user.jwt.JwtAuthenticationEntryPoint;
-import com.back.wdam.user.jwt.JwtSecurityConfig;
-import com.back.wdam.user.jwt.TokenProvider;
+import com.back.wdam.user.jwt.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -16,6 +13,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
@@ -75,8 +73,6 @@ public class SecurityConfig {
                 .sessionManagement(httpSecuritySessionManagementConfigurer -> httpSecuritySessionManagementConfigurer
                                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)) //세션 사용 X
                 .authorizeHttpRequests((authorizeRequests) -> authorizeRequests
-                        //예외처리된 요청 결과에 대해 401 대신 제대로 된 결과를 보내도록
-                        .requestMatchers(new AntPathRequestMatcher("/error")).permitAll()
                         //프론트엔드 빌드 파일들 인증 불필요
                         .requestMatchers(new AntPathRequestMatcher("/")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/static/**")).permitAll()
@@ -86,6 +82,7 @@ public class SecurityConfig {
                         //회원가입과 로그인은 인증 불필요
                         .requestMatchers(new AntPathRequestMatcher("/users/signup")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/users/login")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/users/reissue")).permitAll()
                         //인증 필요
                         .requestMatchers(new AntPathRequestMatcher("/users/update")).authenticated()
                         .requestMatchers(new AntPathRequestMatcher("/users/logout")).authenticated()
@@ -97,7 +94,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
 
                 )
-                .with(new JwtSecurityConfig(tokenProvider), customizer -> {})
+                .addFilterBefore(new JwtFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class)
         ;
 
         return http.build();
