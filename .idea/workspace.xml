@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="61ff4682-8a44-4e27-af7e-14188efaf16a" name="Changes" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$/wdam">
+      <ProjectState />
+    </projectState>
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <projects_view>
+          <tree_state>
+            <expand>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="wdam" type="f1a62948:ProjectNode" />
+              </path>
+            </expand>
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Enum" />
+        <option value="Interface" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 5
+}</component>
+  <component name="ProjectId" id="2dgOL9fDZeo52sUteZsdGV98F0l" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Gradle.Build wdam.executor": "Run",
+    "Gradle.wdam [:WdamApplication.main()].executor": "Run",
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "Spring Boot.WdamApplication.executor": "Run",
+    "git-widget-placeholder": "mypage",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Dev/wdam",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "reference.settingsdialog.project.gradle",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Dev\wdam\wdam\src\main\java\com\back\wdam\entity" />
+      <recent name="C:\Dev\wdam\wdam\src\main\java\com\back\wdam" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Dev\wdam\wdam\src\main\resources" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.back.wdam.user.jwt" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Spring Boot.WdamApplication">
+    <configuration name="WdamApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.back.wdam.WdamApplication" />
+      <module name="com.back.wdam.main" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.back.wdam.user.controller.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="WdamApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
+      <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
+      <module name="wdam.main" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.back.wdam.WdamApplication" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.back.wdam.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Spring Boot.WdamApplication" />
+        <item itemvalue="Application.WdamApplication" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="jdk-17.0.10-corretto-17.0.10-4caba194b151-5cd809f4" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="61ff4682-8a44-4e27-af7e-14188efaf16a" name="Changes" comment="" />
+      <created>1710426196131</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1710426196131</updated>
+      <workItem from="1710426197237" duration="1970000" />
+      <workItem from="1710482387616" duration="9092000" />
+      <workItem from="1710811330299" duration="7527000" />
+      <workItem from="1711093899667" duration="14978000" />
+      <workItem from="1711428761658" duration="816000" />
+      <workItem from="1711518335776" duration="786000" />
+      <workItem from="1711519135259" duration="150000" />
+      <workItem from="1711598763165" duration="501000" />
+      <workItem from="1711599298654" duration="64000" />
+      <workItem from="1711599376247" duration="1277000" />
+      <workItem from="1711600671948" duration="712000" />
+      <workItem from="1711601622511" duration="8000" />
+      <workItem from="1712300407315" duration="15925000" />
+      <workItem from="1712494082193" duration="1024000" />
+      <workItem from="1712807942471" duration="169000" />
+      <workItem from="1712810020522" duration="9315000" />
+      <workItem from="1713172694592" duration="6510000" />
+      <workItem from="1713231252007" duration="3759000" />
+      <workItem from="1713246436853" duration="4398000" />
+      <workItem from="1714440505583" duration="4383000" />
+      <workItem from="1714451593488" duration="7538000" />
+      <workItem from="1714475047486" duration="3218000" />
+      <workItem from="1715046331585" duration="1127000" />
+      <workItem from="1715062636671" duration="5355000" />
+      <workItem from="1715087901039" duration="580000" />
+      <workItem from="1715088584647" duration="1116000" />
+      <workItem from="1715215978125" duration="587000" />
+      <workItem from="1715579914518" duration="261000" />
+      <workItem from="1715669076232" duration="1276000" />
+      <workItem from="1715692911410" duration="3505000" />
+      <workItem from="1715780765857" duration="1138000" />
+      <workItem from="1715817667409" duration="12609000" />
+      <workItem from="1715932436039" duration="1896000" />
+      <workItem from="1715945823016" duration="4143000" />
+      <workItem from="1716084769807" duration="2538000" />
+      <workItem from="1716181141901" duration="8703000" />
+      <workItem from="1716266178824" duration="4115000" />
+      <workItem from="1716271358948" duration="142000" />
+      <workItem from="1716276573977" duration="612000" />
+      <workItem from="1716352323050" duration="38000" />
+      <workItem from="1717472098467" duration="2144000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+</project>

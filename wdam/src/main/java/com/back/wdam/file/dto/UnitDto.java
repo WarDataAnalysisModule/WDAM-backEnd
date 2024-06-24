@@ -19,7 +19,7 @@ public class UnitDto {
     private Double orientation;
     private Double speed;
     private String damageState;
-    private Integer power;
+    private Double power;
     private String powerDistribution;
     private String detectedEntityId;
     private String detectedEntityDistance;
@@ -29,7 +29,7 @@ public class UnitDto {
 
     public UnitDto(long simulationTime, String unitName, String uuid, Integer forceIdentifier,
                    String entitySymbol, Double positionLat, Double positionOn, Double positionAlt, Double orientation,
-                   Double speed, String damageState, Integer power, String powerDistribution, String detectedEntityId,
+                   Double speed, String damageState, Double power, String powerDistribution, String detectedEntityId,
                    String detectedEntityDistance,
                    String echelon, String mos, LocalDateTime createdAt) {
         this.simulationTime = simulationTime;

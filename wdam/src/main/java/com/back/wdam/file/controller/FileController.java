@@ -161,7 +161,7 @@ public class FileController {
 
                                 UnitDto unitDto = new UnitDto(simulationTime.longValue(), unitName, uuid, forceIdentifier.intValue(),
                                         entitySymbol, positionLat, positionOn, positionAlt, orientation, speed,
-                                        damageState, power.intValue(), powerDistribution, detectedEntityId, detectedEntityDistance,
+                                        damageState, power, powerDistribution, detectedEntityId, detectedEntityDistance,
                                         echelon, mos, dateTime);
 
                                 fileService.unnitSave(unitId, unitDto, userDetails, dateTime);
