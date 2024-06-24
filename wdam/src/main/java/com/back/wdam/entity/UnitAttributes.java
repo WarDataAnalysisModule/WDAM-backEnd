@@ -50,7 +50,7 @@ public class UnitAttributes {
 
     private String damageState;
 
-    private Integer power;
+    private Double power;
 
     private String powerDistribution;
 
