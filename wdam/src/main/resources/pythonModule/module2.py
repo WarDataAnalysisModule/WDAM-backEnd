@@ -27,12 +27,19 @@ if __name__ == "__main__":
 
     print("***************\n\n module 2 is processing \n\n ***********")
 
-    if len(sys.argv) > 2:
-        characteristic = sys.argv[1]
-        name = sys.argv[2]
-        preprocessed_data = sys.argv[3]
-    else:
+    if len(sys.argv) not in [6, 7]:
         print("인자 전달 개수 이상")
+        sys.exit(1)
+
+    temp_file_path = sys.argv[1]
+    user_idx = sys.argv[2]
+    log_created = sys.argv[3]
+    characteristics = sys.argv[4]
+    preprocessed_data = sys.argv[5]
+    if len(sys.argv) == 7:
+        unit = sys.argv[6]
+    else:
+        unit = None
 
     if characteristic == "부대 행동":
         messages = [
@@ -46,7 +53,7 @@ if __name__ == "__main__":
 
     result=AnaylizeData(openai, messages)
 
-        # 전처리된 데이터를 작성할 경로
+    # 전처리된 데이터를 작성할 경로
     output_file_path = os.path.join(os.getcwd(), "result.txt")
 
 

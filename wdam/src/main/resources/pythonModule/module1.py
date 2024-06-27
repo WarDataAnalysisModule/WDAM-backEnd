@@ -115,12 +115,18 @@ if __name__ == "__main__":
 
     conn, cursor=DatabaseConnect()
 
-    if len(sys.argv) > 2:
-        characteristic = sys.argv[1]
-        name = sys.argv[2]
-    else:
+    if len(sys.argv) not in [5, 6]:
         print("인자 전달 개수 이상")
         sys.exit(1)
+
+    temp_file_path = sys.argv[1]
+    user_idx = sys.argv[2]
+    log_created = sys.argv[3]
+    characteristics = sys.argv[4]
+    if len(sys.argv) == 6:
+        unit = sys.argv[5]
+    else:
+        unit = None
 
 
 

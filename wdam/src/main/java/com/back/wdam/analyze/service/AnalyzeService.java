@@ -8,13 +8,10 @@ import com.back.wdam.user.repository.UserRepository;
 import com.back.wdam.util.exception.CustomException;
 import com.back.wdam.util.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -65,10 +62,11 @@ public class AnalyzeService {
 
     public boolean sendAnalyzeDataToModule(UserDetails userDetails, String characteristics, String unit, LocalDateTime logCreated) {
 
-        String line = "", preprocessedData = "", result = "";
-        ProcessBuilder processBuilder;
-        Process process;
+        String preprocessedData = "", result = "";
         int exitCode;
+        Users user = getUserByName(userDetails);
+        String userIdx = String.valueOf(user.getUserIdx());
+        String logCreatedInString = String.valueOf(logCreated);
 
         try {
 
@@ -84,7 +82,24 @@ public class AnalyzeService {
             in.close();
 
             // ProcessBuilder를 사용하여 파이썬 파일 실행
-            ProcessBuilder processBuilder_m1 = new ProcessBuilder("python", tempFile.getAbsolutePath(), characteristics, unit);
+            ProcessBuilder processBuilder_m1;
+            if(unit == null) {
+                processBuilder_m1 = new ProcessBuilder(
+                        "python",
+                        tempFile.getAbsolutePath(),
+                        userIdx,
+                        logCreatedInString,
+                        characteristics);
+            }
+            else {
+                processBuilder_m1 = new ProcessBuilder(
+                        "python",
+                        tempFile.getAbsolutePath(),
+                        userIdx,
+                        logCreatedInString,
+                        characteristics,
+                        unit);
+            }
             processBuilder_m1.redirectErrorStream(true);
             Process process_m1 = processBuilder_m1.start();
 
@@ -110,8 +125,6 @@ public class AnalyzeService {
             } else {
                 System.err.println("preprocessedData.txt not found.");
             }
-
-
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
             throw new CustomException(ErrorCode.PROCESS_EXECUTION_ERROR);
@@ -135,7 +148,26 @@ public class AnalyzeService {
             in.close();
 
             // ProcessBuilder를 사용하여 파이썬 파일 실행
-            ProcessBuilder processBuilder_m2 = new ProcessBuilder("python", tempFile.getAbsolutePath(), characteristics, unit, preprocessedData);
+            ProcessBuilder processBuilder_m2;
+            if(unit == null) {
+                processBuilder_m2 = new ProcessBuilder(
+                        "python",
+                        tempFile.getAbsolutePath(),
+                        userIdx,
+                        logCreatedInString,
+                        characteristics,
+                        preprocessedData);
+            }
+            else {
+                processBuilder_m2 = new ProcessBuilder(
+                        "python",
+                        tempFile.getAbsolutePath(),
+                        userIdx,
+                        logCreatedInString,
+                        characteristics,
+                        preprocessedData,
+                        unit);
+            }
             processBuilder_m2.redirectErrorStream(true);
             Process process_m2 = processBuilder_m2.start();
 
@@ -161,61 +193,6 @@ public class AnalyzeService {
             } else {
                 System.err.println("result.txt not found.");
             }
-//            InputStream in = this.getClass().getClassLoader().getResourceAsStream("pythonModule/module2.py");
-//            if (in == null) {
-//                throw new FileNotFoundException("module2.py not found in classpath");
-//            }
-//            else System.out.println("\nModule 2 found!\n");
-//
-////            File tempFile2 = File.createTempFile("module2", ".py");
-////            Files.copy(in, tempFile2.toPath(), StandardCopyOption.REPLACE_EXISTING);
-////            in.close();
-//
-//            processBuilder = new ProcessBuilder("python"
-//                    , characteristics
-//                    , unit
-//                    , preprocessedData);
-//            process = processBuilder.start();
-//
-//
-////            // module2 실행
-////            processBuilder = new ProcessBuilder("python"
-////                    , "src\\main\\java\\com\\back\\wdam\\pythonModule\\module2.py"
-////                    , characteristics
-////                    , unit
-////                    , preprocessedData);
-////            process = processBuilder.start();
-//
-//            BufferedReader stderrReader = new BufferedReader(new InputStreamReader(process.getErrorStream(), StandardCharsets.UTF_8));
-//            while ((line = stderrReader.readLine()) != null) {
-//                System.out.println("Error: " + line);
-//            }
-//
-//            exitCode = process.waitFor();
-//            if (exitCode != 0) {
-//                throw new IOException("Process exited with error code " + exitCode);
-//            }
-//
-////            // Read the result from the temp file
-////            File resultFile = new File("src/main/java/com/back/wdam/analyze/resources/result.txt");
-////            try (BufferedReader fileReader = new BufferedReader(new FileReader(resultFile))) {
-////                StringBuilder outputBuilder = new StringBuilder();
-////                while ((line = fileReader.readLine()) != null) {
-////                    outputBuilder.append(line).append("\n");
-////                }
-////                result = outputBuilder.toString().trim();
-//
-//            StringBuilder outputBuilder = new StringBuilder();
-//            try (BufferedReader fileReader = new BufferedReader(new FileReader("src\\main\\java\\com\\back\\wdam\\analyze\\resources\\result.txt"))) {
-//                while ((line = fileReader.readLine()) != null) {
-//                    outputBuilder.append(line).append("\n");
-//                }
-//                result = outputBuilder.toString().trim();
-
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
             throw new CustomException(ErrorCode.PROCESS_EXECUTION_ERROR);
@@ -236,10 +213,47 @@ public class AnalyzeService {
         if(unitList.isEmpty()) {
             throw new CustomException(ErrorCode.UNIT_LIST_NOT_FOUND);
         }
-        //final int UNIT_LIST_INDEX = 0;
 
         if(characteristics.equals("부대 행동")) {
             checkUnitBehavior(user.getUserIdx(), unitList.get().getListIdx(), logCreated);
+        }
+        else if(characteristics.equals("부대 이동 속도/위치 변화")) {
+            checkUnitAttributes(user.getUserIdx(), unitList.get().getListIdx(), logCreated, false);
+        }
+        else if(characteristics.equals("인원 장비 수량 변화")) {
+            checkUnitInit(user.getUserIdx(), unitList.get().getListIdx(), logCreated);
+            checkEvent(user.getUserIdx(), unitList.get().getListIdx(), logCreated);
+        }
+        else if(characteristics.equals("부대의 전투력")) {
+            checkUnitAttributes(user.getUserIdx(), unitList.get().getListIdx(), logCreated, false);
+        }
+        else if(characteristics.equals("부대의 피해 상황")) {
+            checkUnitAttributes(user.getUserIdx(), unitList.get().getListIdx(), logCreated, false);
+        }
+        else if(characteristics.equals("개체 탐지")) {
+            checkUnitAttributes(user.getUserIdx(), unitList.get().getListIdx(), logCreated, false);
+        }
+        else if(characteristics.equals("부대 정보")) {
+            List<UnitList> unitLists = getUnitList(user.getUserIdx(), logCreated);
+            for(UnitList unitFromUnitList : unitLists) {
+                checkUnitInit(user.getUserIdx(), unitFromUnitList.getListIdx(), logCreated);
+            }
+        }
+        else if(characteristics.equals("부대 상태 및 지원")) {
+            List<UnitList> unitLists = getUnitList(user.getUserIdx(), logCreated);
+            for(UnitList unitFromUnitList : unitLists) {
+
+                boolean isUnit = checkUnitAttributes(user.getUserIdx(), unitFromUnitList.getListIdx(), logCreated, true);
+                if(!isUnit) {
+                    checkUpperAttributes(user.getUserIdx(), unitFromUnitList.getListIdx(), logCreated);
+                }
+            }
+        }
+        else if(characteristics.equals("부대 간 협력 분석")) {
+            checkUnitAttributes(user.getUserIdx(), unitList.get().getListIdx(), logCreated, false);
+        }
+        else if(characteristics.equals("피해 및 복구 패턴 분석")) {
+            checkUnitAttributes(user.getUserIdx(), unitList.get().getListIdx(), logCreated, false);
         }
         else {
             throw new CustomException(ErrorCode.CHARACTERISTIC_INVALID);
@@ -253,8 +267,8 @@ public class AnalyzeService {
         return users.get();
     }
 
-    private void checkEvent(Long userIdx, Long listIdx) {
-        Optional<List<Event>> event = eventRepository.findAllByUserIdxAndListIdx(userIdx, listIdx);
+    private void checkEvent(Long userIdx, Long listIdx, LocalDateTime createdAt) {
+        Optional<List<Event>> event = eventRepository.findAllByUserIdxAndListIdx(userIdx, listIdx, createdAt);
         if(event.isEmpty() || event.get().isEmpty())
             throw new CustomException(ErrorCode.EVENT_NOT_FOUND);
     }
@@ -265,21 +279,36 @@ public class AnalyzeService {
             throw new CustomException(ErrorCode.BEHAVIOR_NOT_FOUND);
     }
 
-    private void checkUnitInit(Long userIdx, Long listIdx) {
-        Optional<List<UnitInit>> unitInit = initRepository.findAllByUserIdxAndListIdx(userIdx, listIdx);
+    private void checkUnitInit(Long userIdx, Long listIdx, LocalDateTime createdAt) {
+        Optional<List<UnitInit>> unitInit = initRepository.findAllByUserIdxAndListIdx(userIdx, listIdx, createdAt);
         if(unitInit.isEmpty() || unitInit.get().isEmpty())
             throw new CustomException(ErrorCode.UNIT_INIT_NOT_FOUND);
     }
 
-    private void checkUnitAttributes(Long userIdx, Long listIdx) {
-        Optional<List<UnitAttributes>> unitAttributes = unitRepository.findAllByUserIdxAndListIdx(userIdx, listIdx);
-        if(unitAttributes.isEmpty() || unitAttributes.get().isEmpty())
+    private boolean checkUnitAttributes(Long userIdx, Long listIdx, LocalDateTime createdAt, boolean isAll) {
+        Optional<List<UnitAttributes>> unitAttributes = unitRepository.findAllByUserIdxAndListIdx(userIdx, listIdx, createdAt);
+        if((unitAttributes.isEmpty() || unitAttributes.get().isEmpty()) && !isAll) {
             throw new CustomException(ErrorCode.UNIT_ATTRIBUTES_NOT_FOUND);
+        }
+        else if(unitAttributes.isEmpty() || unitAttributes.get().isEmpty()) {
+            return false;
+        }
+        return true;
     }
 
-    private void checkUpperAttributes(Long userIdx, Long listIdx) {
-        Optional<List<UpperAttributes>> upperAttributes = upperRepository.findAllByUserIdxAndListIdx(userIdx, listIdx);
-        if(upperAttributes.isEmpty() || upperAttributes.get().isEmpty())
+    private void checkUpperAttributes(Long userIdx, Long listIdx, LocalDateTime createdAt) {
+        Optional<List<UpperAttributes>> upperAttributes = upperRepository.findAllByUserIdxAndListIdx(userIdx, listIdx, createdAt);
+        if(upperAttributes.isEmpty() || upperAttributes.get().isEmpty()) {
             throw new CustomException(ErrorCode.UPPER_ATTRIBUTES_NOT_FOUND);
+        }
+    }
+
+    private List<UnitList> getUnitList(Long userIdx, LocalDateTime createdAt) {
+        List<UnitList> unitLists = new ArrayList<>();
+        unitLists = unitListRepository.findAllByUserIdxAndLogCreated(userIdx, createdAt).get();
+        if(unitLists == null || !unitLists.isEmpty()) {
+            throw new CustomException(ErrorCode.UNIT_LIST_NOT_FOUND);
+        }
+        return unitLists;
     }
 }
