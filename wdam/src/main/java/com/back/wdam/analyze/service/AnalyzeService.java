@@ -8,15 +8,16 @@ import com.back.wdam.user.repository.UserRepository;
 import com.back.wdam.util.exception.CustomException;
 import com.back.wdam.util.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -70,31 +71,46 @@ public class AnalyzeService {
         int exitCode;
 
         try {
-            processBuilder = new ProcessBuilder("python"
-                    , "src\\main\\java\\com\\back\\wdam\\pythonModule\\module1.py"
-                    , characteristics
-                    , unit);
-            process = processBuilder.start();
 
-            BufferedReader stderrReader = new BufferedReader(new InputStreamReader(process.getErrorStream(), StandardCharsets.UTF_8));
-            while ((line = stderrReader.readLine()) != null) {
-                System.out.println("Error: " + line);
+            InputStream in = this.getClass().getClassLoader().getResourceAsStream("pythonModule/module1.py");
+            if (in == null) {
+                throw new FileNotFoundException("module1.py not found in classpath");
+            }
+            else System.out.println("\nModule 1 found!\n");
+
+            // 임시 파일 생성
+            File tempFile = File.createTempFile("module1", ".py");
+            Files.copy(in, tempFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            in.close();
+
+            // ProcessBuilder를 사용하여 파이썬 파일 실행
+            ProcessBuilder processBuilder_m1 = new ProcessBuilder("python", tempFile.getAbsolutePath(), characteristics, unit);
+            processBuilder_m1.redirectErrorStream(true);
+            Process process_m1 = processBuilder_m1.start();
+
+            // 프로세스 출력 읽기
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process_m1.getInputStream()))) {
+                String line_m1;
+                while ((line_m1 = reader.readLine()) != null) {
+                    System.out.println(line_m1);
+                }
             }
 
-            exitCode = process.waitFor();
+            exitCode = process_m1.waitFor();
             if (exitCode != 0) {
                 throw new IOException("Process exited with error code " + exitCode);
             }
 
-            StringBuilder outputBuilder = new StringBuilder();
-            try (BufferedReader fileReader = new BufferedReader(new FileReader("src\\main\\java\\com\\back\\wdam\\analyze\\resources\\preprocessedData.txt"))) {
-                while ((line = fileReader.readLine()) != null) {
-                    outputBuilder.append(line).append("\n");
-                }
-                preprocessedData = outputBuilder.toString().trim();
-            } catch (IOException e) {
-                e.printStackTrace();
+            // 파이썬 스크립트에서 생성한 파일 읽기
+            Path outputFilePath = new File(System.getProperty("user.dir"), "preprocessedData.txt").toPath();
+            if (Files.exists(outputFilePath)) {
+                preprocessedData = Files.readString(outputFilePath);
+                System.out.println("Content of preprocessedData.txt:");
+                System.out.println(preprocessedData);
+            } else {
+                System.err.println("preprocessedData.txt not found.");
             }
+
 
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
@@ -106,33 +122,99 @@ public class AnalyzeService {
         }
 
         try {
-            // module2 실행
-            processBuilder = new ProcessBuilder("python"
-                    , "src\\main\\java\\com\\back\\wdam\\pythonModule\\module2.py"
-                    , characteristics
-                    , unit
-                    , preprocessedData);
-            process = processBuilder.start();
 
-            BufferedReader stderrReader = new BufferedReader(new InputStreamReader(process.getErrorStream(), StandardCharsets.UTF_8));
-            while ((line = stderrReader.readLine()) != null) {
-                System.out.println("Error: " + line);
+            InputStream in = this.getClass().getClassLoader().getResourceAsStream("pythonModule/module2.py");
+            if (in == null) {
+                throw new FileNotFoundException("module2.py not found in classpath");
+            }
+            else System.out.println("\nModule 2 found!\n");
+
+            // 임시 파일 생성
+            File tempFile = File.createTempFile("module2", ".py");
+            Files.copy(in, tempFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            in.close();
+
+            // ProcessBuilder를 사용하여 파이썬 파일 실행
+            ProcessBuilder processBuilder_m2 = new ProcessBuilder("python", tempFile.getAbsolutePath(), characteristics, unit, preprocessedData);
+            processBuilder_m2.redirectErrorStream(true);
+            Process process_m2 = processBuilder_m2.start();
+
+            // 프로세스 출력 읽기
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process_m2.getInputStream()))) {
+                String line_m2;
+                while ((line_m2 = reader.readLine()) != null) {
+                    System.out.println(line_m2);
+                }
             }
 
-            exitCode = process.waitFor();
+            exitCode = process_m2.waitFor();
             if (exitCode != 0) {
                 throw new IOException("Process exited with error code " + exitCode);
             }
 
-            StringBuilder outputBuilder = new StringBuilder();
-            try (BufferedReader fileReader = new BufferedReader(new FileReader("src\\main\\java\\com\\back\\wdam\\analyze\\resources\\result.txt"))) {
-                while ((line = fileReader.readLine()) != null) {
-                    outputBuilder.append(line).append("\n");
-                }
-                result = outputBuilder.toString().trim();
-            } catch (IOException e) {
-                e.printStackTrace();
+            // 파이썬 스크립트에서 생성한 파일 읽기
+            Path outputFilePath = new File(System.getProperty("user.dir"), "result.txt").toPath();
+            if (Files.exists(outputFilePath)) {
+                result = Files.readString(outputFilePath);
+                System.out.println("Content of result.txt:");
+                System.out.println(result);
+            } else {
+                System.err.println("result.txt not found.");
             }
+//            InputStream in = this.getClass().getClassLoader().getResourceAsStream("pythonModule/module2.py");
+//            if (in == null) {
+//                throw new FileNotFoundException("module2.py not found in classpath");
+//            }
+//            else System.out.println("\nModule 2 found!\n");
+//
+////            File tempFile2 = File.createTempFile("module2", ".py");
+////            Files.copy(in, tempFile2.toPath(), StandardCopyOption.REPLACE_EXISTING);
+////            in.close();
+//
+//            processBuilder = new ProcessBuilder("python"
+//                    , characteristics
+//                    , unit
+//                    , preprocessedData);
+//            process = processBuilder.start();
+//
+//
+////            // module2 실행
+////            processBuilder = new ProcessBuilder("python"
+////                    , "src\\main\\java\\com\\back\\wdam\\pythonModule\\module2.py"
+////                    , characteristics
+////                    , unit
+////                    , preprocessedData);
+////            process = processBuilder.start();
+//
+//            BufferedReader stderrReader = new BufferedReader(new InputStreamReader(process.getErrorStream(), StandardCharsets.UTF_8));
+//            while ((line = stderrReader.readLine()) != null) {
+//                System.out.println("Error: " + line);
+//            }
+//
+//            exitCode = process.waitFor();
+//            if (exitCode != 0) {
+//                throw new IOException("Process exited with error code " + exitCode);
+//            }
+//
+////            // Read the result from the temp file
+////            File resultFile = new File("src/main/java/com/back/wdam/analyze/resources/result.txt");
+////            try (BufferedReader fileReader = new BufferedReader(new FileReader(resultFile))) {
+////                StringBuilder outputBuilder = new StringBuilder();
+////                while ((line = fileReader.readLine()) != null) {
+////                    outputBuilder.append(line).append("\n");
+////                }
+////                result = outputBuilder.toString().trim();
+//
+//            StringBuilder outputBuilder = new StringBuilder();
+//            try (BufferedReader fileReader = new BufferedReader(new FileReader("src\\main\\java\\com\\back\\wdam\\analyze\\resources\\result.txt"))) {
+//                while ((line = fileReader.readLine()) != null) {
+//                    outputBuilder.append(line).append("\n");
+//                }
+//                result = outputBuilder.toString().trim();
+
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
 
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
