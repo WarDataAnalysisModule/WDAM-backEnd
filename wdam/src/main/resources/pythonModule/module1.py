@@ -31,8 +31,11 @@ return: conn, cursor 객체
 """
 def DatabaseConnect():
     conn = mysql.connector.connect(
-
-    )
+                host="wdamdb.c5eo862oesfa.ap-northeast-2.rds.amazonaws.com",
+                user="root",
+                password="thisispado",
+                database="wdamdb"
+            )
     cursor=conn.cursor(buffered=True) # 커서 생성
     return conn, cursor
 
@@ -63,8 +66,13 @@ param4: 데이터베이스 커서
 return: 추출한 로그
 """
 def Extract_UnitSpeed(id, user_idx, log_created, cursor):
+
+#     print("ID:", id)
+#     print("User ID:", user_idx)
+#     print("Log Created:", log_created)
+
     query = "SELECT simulation_time, position_lat, position_lon, position_alt, speed FROM unit_attributes WHERE list_idx = %s AND created_at=%s AND user_idx=%s"
-    cursor.execute(query, (id,user_idx,log_created))
+    cursor.execute(query, (id, log_created, user_idx))
     result=cursor.fetchall()
 
     # 추출한 데이터로부터 데이터프레임 생성
@@ -90,10 +98,15 @@ param4: 데이터베이스 커서
 return: 추출한 로그
 """
 def Extract_Event(id, user_idx, log_created, cursor):
+
+    print("ID:", id)
+    print("User ID:", user_idx)
+    print("Log Created:", log_created)
+
     # init 파일에서 초기 상태를 추출
-    query1 = "SELECT unit_name, status, member, equipment, supply FROM unit_init WHERE list_idx = %s AND created_at=%s AND user_idx=%s"
-    cursor.execute(query1, (id,user_idx,log_created))
-    result1=cursor.fetchall()
+    query1 = "SELECT unit_name, status, member, equipment, supply FROM unit_init WHERE list_idx = %s AND created_at = %s AND user_idx = %s"
+    cursor.execute(query1, (id, log_created, user_idx))
+    result1 = cursor.fetchall()
 
     # 추출한 데이터로부터 데이터프레임 생성
     dataframe1=pd.DataFrame(result1, columns=['unit_name', 'status', 'member', 'equipment', 'supply'])
@@ -127,11 +140,8 @@ def Extract_Event(id, user_idx, log_created, cursor):
             \t {row['source_supply']}\t {row['target_supply']}\t {row['distance']}"
         input_texts.append(text)
 
-    with open("tmp.txt", "w", encoding="utf-8") as file:
-        for line in input_texts:
-            file.write(line + "\n")
-
-    return input_texts
+    input_texts_str = "\n".join(input_texts)
+    return input_texts_str
 
 ###################################################################################################
 
@@ -348,9 +358,13 @@ def CreateMessage(characteristic, input_texts):
 
 if __name__ == "__main__":
 
-    print("***************\n\n module 1 is processing \n\n ***********")
+    print("***************\n\n module 1 is processing \n\n***************")
 
     conn, cursor=DatabaseConnect()
+
+    if len(sys.argv) not in [5, 6]:
+        print("인자 전달 개수 이상")
+        sys.exit(1)
 
     temp_file_path = sys.argv[0]
     user_idx = sys.argv[1]
@@ -363,6 +377,11 @@ if __name__ == "__main__":
 
     id = FindID(name, user_idx, log_created, cursor)
 
+#     print("Temp File Path:", temp_file_path)
+#     print("User ID:", user_idx)
+#     print("Log Created:", log_created)
+#     print("Characteristic:", characteristic)
+#     print("Name:", name)
 
     # ChatGPT Connect
     os.environ.get('OPENAI_API_KEY') is None
@@ -374,7 +393,7 @@ if __name__ == "__main__":
     preprocessed_data=""
 
     if characteristic == "부대 이동 속도 / 위치 변화":
-        input_texts=Extract_UnitSpeed(id,cursor)
+        input_texts=Extract_UnitSpeed(id, user_idx, log_created, cursor)
         messages=CreateMessage(characteristic, input_texts)
     elif characteristic == "부대의 전투력":
         input_texts = Extract_Unit_CombatCapability(id, user_idx, log_created, cursor)
@@ -390,14 +409,13 @@ if __name__ == "__main__":
         preprocessed_data=""
 
     if characteristic=="인원/장비 수량 변화":
-        input_texts=Extract_Event(id, cursor)
+        input_texts=Extract_Event(id, user_idx, log_created, cursor)
         preprocessed_data=input_texts
     else:
         preprocessed_data=DataPreprocessing(openai, messages)
 
     # 전처리된 데이터를 작성할 경로
     output_file_path = os.path.join(os.getcwd(), "preprocessedData.txt")
-
 
     # 파일에 데이터 쓰기
     with open(output_file_path, "w", encoding="utf-8") as file:

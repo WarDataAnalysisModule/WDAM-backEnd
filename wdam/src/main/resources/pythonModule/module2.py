@@ -20,8 +20,8 @@ param1: input_texts 추출한 로그
 def CreateMessage(characteristic, preprocessed_data, name):
     messages = []
     if characteristic=="부대 이동 속도 / 위치 변화": # 1
-        file_name="std_config.txt" # 분석 기준
-        with open(file_name, "r") as file:
+        file_name = os.path.join(os.getcwd(), "std_config.txt") # 분석 기준
+        with open(file_name, "r", encoding="utf-8") as file:
             std=file.read()
         messages = [
             {"role": "system", "content": "당신은 주어진 데이터를 분석해야 한다."},
@@ -91,7 +91,7 @@ import sys
 
 if __name__ == "__main__":
 
-    print("***************\n\n module 2 is processing \n\n ***********")
+    print("***************\n\n module 2 is processing \n\n***************")
 
     # ChatGPT Connect
     import os
@@ -99,6 +99,10 @@ if __name__ == "__main__":
     os.environ.get('OPENAI_API_KEY') is None
     os.environ["OPENAI_API_KEY"] = 'sk-'    # 실행 시 api 를 입력하세요.
     openai.api_key = os.getenv("OPENAI_API_KEY")
+
+    if len(sys.argv) not in [6, 7]:
+        print("인자 전달 개수 이상")
+        sys.exit(1)
 
     temp_file_path = sys.argv[0]
     user_idx = sys.argv[1]
@@ -109,6 +113,7 @@ if __name__ == "__main__":
         name = sys.argv[5]
     else:
         name = None
+
 
     if characteristic=="부대 이동 속도 / 위치 변화":
         messages=CreateMessage(characteristic, preprocessed_data, name)

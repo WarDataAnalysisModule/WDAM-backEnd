@@ -289,8 +289,10 @@ public class AnalyzeService {
 
     private void checkUnitBehavior(Long userIdx, Long listIdx, LocalDateTime createdAt) {
         Optional<List<UnitBehavior>> behavior = behaviorRepository.findAllByUserIdxAndListIdxAndSimulationTime(userIdx, listIdx, createdAt);
-        if(behavior.isEmpty() || behavior.get().isEmpty())
+        //System.out.println("userIdx: " + userIdx + " listIdx: " + listIdx + " createdAt: " + createdAt);
+        if(behavior.isEmpty() || behavior.get().isEmpty()) {
             throw new CustomException(ErrorCode.BEHAVIOR_NOT_FOUND);
+        }
     }
 
     private void checkUnitInit(Long userIdx, Long listIdx, LocalDateTime createdAt) {
@@ -301,10 +303,11 @@ public class AnalyzeService {
 
     private boolean checkUnitAttributes(Long userIdx, Long listIdx, LocalDateTime createdAt, boolean isAll) {
         Optional<List<UnitAttributes>> unitAttributes = unitRepository.findAllByUserIdxAndListIdx(userIdx, listIdx, createdAt);
-        if((unitAttributes.isEmpty() || unitAttributes.get().isEmpty()) && !isAll) {
-            throw new CustomException(ErrorCode.UNIT_ATTRIBUTES_NOT_FOUND);
-        }
-        else if(unitAttributes.isEmpty() || unitAttributes.get().isEmpty()) {
+        System.out.println("userIdx: " + userIdx + " listIdx: " + listIdx + " createdAt: " + createdAt + " isAll: " + isAll);
+        if (unitAttributes.isEmpty() || unitAttributes.get().isEmpty()) {
+            if (!isAll) {
+                throw new CustomException(ErrorCode.UNIT_ATTRIBUTES_NOT_FOUND);
+            }
             return false;
         }
         return true;
