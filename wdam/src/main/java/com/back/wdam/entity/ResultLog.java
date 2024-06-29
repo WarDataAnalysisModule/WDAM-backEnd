@@ -24,7 +24,7 @@ public class ResultLog {
 
     private String analysisFeature;
 
-    @Column(name = "result", length = 10000)
+    @Column(name = "result", length = 21844)
     private String result;
 
     private LocalDateTime logCreated;   // 로그 생성일자
