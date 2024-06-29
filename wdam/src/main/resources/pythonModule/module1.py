@@ -99,9 +99,9 @@ return: 추출한 로그
 """
 def Extract_Event(id, user_idx, log_created, cursor):
 
-    print("ID:", id)
-    print("User ID:", user_idx)
-    print("Log Created:", log_created)
+#     print("ID:", id)
+#     print("User ID:", user_idx)
+#     print("Log Created:", log_created)
 
     # init 파일에서 초기 상태를 추출
     query1 = "SELECT unit_name, status, member, equipment, supply FROM unit_init WHERE list_idx = %s AND created_at = %s AND user_idx = %s"
@@ -362,7 +362,7 @@ if __name__ == "__main__":
 
     conn, cursor=DatabaseConnect()
 
-    if len(sys.argv) not in [5, 6]:
+    if len(sys.argv) not in [4, 5]:
         print("인자 전달 개수 이상")
         sys.exit(1)
 

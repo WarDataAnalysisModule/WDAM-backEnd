@@ -17,11 +17,10 @@ def AnaylizeData(openai,messages):
 breif: ChatGPT API에 입력할 메시지 작성
 param1: input_texts 추출한 로그
 """
-def CreateMessage(characteristic, preprocessed_data, name):
+def CreateMessage(characteristic, preprocessed_data, name, std_config_path):
     messages = []
     if characteristic=="부대 이동 속도 / 위치 변화": # 1
-        file_name = os.path.join(os.getcwd(), "std_config.txt") # 분석 기준
-        with open(file_name, "r", encoding="utf-8") as file:
+        with open(std_config_path, "r", encoding="utf-8") as file: # 분석 기준
             std=file.read()
         messages = [
             {"role": "system", "content": "당신은 주어진 데이터를 분석해야 한다."},
@@ -109,22 +108,24 @@ if __name__ == "__main__":
     log_created = sys.argv[2]
     characteristic = sys.argv[3]
     preprocessed_data = sys.argv[4]
-    if len(sys.argv) == 6:
-        name = sys.argv[5]
+    std_config_path = sys.argv[5]
+    if len(sys.argv) == 7:
+        name = sys.argv[6]
     else:
         name = None
 
+    print("std_config_path: ", std_config_path)
 
     if characteristic=="부대 이동 속도 / 위치 변화":
-        messages=CreateMessage(characteristic, preprocessed_data, name)
+        messages=CreateMessage(characteristic, preprocessed_data, name, std_config_path)
     elif characteristic == "인원/장비 수량 변화":
-        messages = CreateMessage(characteristic, preprocessed_data, name)
+        messages = CreateMessage(characteristic, preprocessed_data, name, std_config_path)
     elif characteristic == "부대의 전투력":
-        messages = CreateMessage(characteristic, preprocessed_data, name)
+        messages = CreateMessage(characteristic, preprocessed_data, name, std_config_path)
     elif characteristic == "부대의 피해 상황":
-        messages = CreateMessage(characteristic, preprocessed_data, name)
+        messages = CreateMessage(characteristic, preprocessed_data, name, std_config_path)
     elif characteristic == "부대 행동":
-        messages = CreateMessage(characteristic, preprocessed_data, name)
+        messages = CreateMessage(characteristic, preprocessed_data, name, std_config_path)
     else:
         messages=[]
 

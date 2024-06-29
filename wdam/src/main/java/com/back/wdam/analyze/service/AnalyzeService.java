@@ -76,7 +76,7 @@ public class AnalyzeService {
             }
             else System.out.println("\nModule 1 found!\n");
 
-            // 임시 파일 생성
+            // module1 임시 파일 생성
             File tempFile = File.createTempFile("module1", ".py");
             Files.copy(in, tempFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
             in.close();
@@ -144,9 +144,20 @@ public class AnalyzeService {
             }
             else System.out.println("\nModule 2 found!\n");
 
-            // 임시 파일 생성
+            // module2 임시 파일 생성
             File tempFile = File.createTempFile("module2", ".py");
             Files.copy(in, tempFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            in.close();
+
+            in = this.getClass().getClassLoader().getResourceAsStream("pythonModule/std_config.txt");
+            if (in == null) {
+                throw new FileNotFoundException("std_config.txt not found in classpath");
+            }
+            else System.out.println("\nstd_config.txt found!\n");
+            
+            // std_config 임시 파일 생성
+            File tempStdConfig = File.createTempFile("std_config", ".txt");
+            Files.copy(in, tempStdConfig.toPath(), StandardCopyOption.REPLACE_EXISTING);
             in.close();
 
             // ProcessBuilder를 사용하여 파이썬 파일 실행
@@ -158,7 +169,8 @@ public class AnalyzeService {
                         userIdx,
                         logCreatedInString,
                         characteristics,
-                        preprocessedData);
+                        preprocessedData,
+                        tempStdConfig.getAbsolutePath());
             }
             else {
                 processBuilder_m2 = new ProcessBuilder(
@@ -168,6 +180,7 @@ public class AnalyzeService {
                         logCreatedInString,
                         characteristics,
                         preprocessedData,
+                        tempStdConfig.getAbsolutePath(),
                         unit);
             }
             processBuilder_m2.redirectErrorStream(true);
