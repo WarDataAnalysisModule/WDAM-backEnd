@@ -79,6 +79,7 @@ public class SecurityConfig {
                         .requestMatchers(new AntPathRequestMatcher("/index.html")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/favicon.ico")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/manifest.json")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/media/**")).permitAll()
                         //회원가입과 로그인은 인증 불필요
                         .requestMatchers(new AntPathRequestMatcher("/users/signup")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/users/login")).permitAll()

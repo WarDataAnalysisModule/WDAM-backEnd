@@ -84,6 +84,7 @@ public class AnalyzeService {
             // ProcessBuilder를 사용하여 파이썬 파일 실행
             ProcessBuilder processBuilder_m1;
             if(unit == null) {
+                System.out.println("**unit x**");
                 processBuilder_m1 = new ProcessBuilder(
                         "python",
                         tempFile.getAbsolutePath(),
@@ -92,6 +93,7 @@ public class AnalyzeService {
                         characteristics);
             }
             else {
+                System.out.println("**unit o**");
                 processBuilder_m1 = new ProcessBuilder(
                         "python",
                         tempFile.getAbsolutePath(),
@@ -208,6 +210,8 @@ public class AnalyzeService {
 
     public void checkDataForAnalysis(UserDetails userDetails, String characteristics, String unit, LocalDateTime logCreated) {
 
+        System.out.println("****\n\ncheck data for analysis"+characteristics+"\n\n****");
+
         Users user = getUserByName(userDetails);
         Optional<UnitList> unitList = unitListRepository.findByUserIdxAndUnitNameAndLogCreated(user.getUserIdx(), unit, logCreated);
         if(unitList.isEmpty()) {
@@ -215,31 +219,39 @@ public class AnalyzeService {
         }
 
         if(characteristics.equals("부대 행동")) {
+            System.out.println("check data for 부대 행동");
             checkUnitBehavior(user.getUserIdx(), unitList.get().getListIdx(), logCreated);
         }
-        else if(characteristics.equals("부대 이동 속도/위치 변화")) {
+        else if(characteristics.equals("부대 이동 속도 / 위치 변화")) {
+            System.out.println("check data for 부대 이동 속도/위치 변화");
             checkUnitAttributes(user.getUserIdx(), unitList.get().getListIdx(), logCreated, false);
         }
-        else if(characteristics.equals("인원 장비 수량 변화")) {
+        else if(characteristics.equals("인원/장비 수량 변화")) {
+            System.out.println("check data for 인원/장비 수량 변화");
             checkUnitInit(user.getUserIdx(), unitList.get().getListIdx(), logCreated);
             checkEvent(user.getUserIdx(), unitList.get().getListIdx(), logCreated);
         }
         else if(characteristics.equals("부대의 전투력")) {
+            System.out.println("check data for부대의 전투력");
             checkUnitAttributes(user.getUserIdx(), unitList.get().getListIdx(), logCreated, false);
         }
         else if(characteristics.equals("부대의 피해 상황")) {
+            System.out.println("check data for부대의 피해 상황");
             checkUnitAttributes(user.getUserIdx(), unitList.get().getListIdx(), logCreated, false);
         }
         else if(characteristics.equals("개체 탐지")) {
+            System.out.println("check data for개체 탐지");
             checkUnitAttributes(user.getUserIdx(), unitList.get().getListIdx(), logCreated, false);
         }
         else if(characteristics.equals("부대 정보")) {
+            System.out.println("check data for부대 정보");
             List<UnitList> unitLists = getUnitList(user.getUserIdx(), logCreated);
             for(UnitList unitFromUnitList : unitLists) {
                 checkUnitInit(user.getUserIdx(), unitFromUnitList.getListIdx(), logCreated);
             }
         }
         else if(characteristics.equals("부대 상태 및 지원")) {
+            System.out.println("check data for 부대 상태 및 지원");
             List<UnitList> unitLists = getUnitList(user.getUserIdx(), logCreated);
             for(UnitList unitFromUnitList : unitLists) {
 
@@ -250,9 +262,11 @@ public class AnalyzeService {
             }
         }
         else if(characteristics.equals("부대 간 협력 분석")) {
+            System.out.println("check data for 부대 간 협력 분석");
             checkUnitAttributes(user.getUserIdx(), unitList.get().getListIdx(), logCreated, false);
         }
         else if(characteristics.equals("피해 및 복구 패턴 분석")) {
+            System.out.println("check data for 피해 및 복구 패턴 분석");
             checkUnitAttributes(user.getUserIdx(), unitList.get().getListIdx(), logCreated, false);
         }
         else {
@@ -312,3 +326,4 @@ public class AnalyzeService {
         return unitLists;
     }
 }
+
