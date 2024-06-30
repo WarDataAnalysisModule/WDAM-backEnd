@@ -18,6 +18,7 @@ import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Transactional
@@ -226,9 +227,13 @@ public class AnalyzeService {
         System.out.println("****\n\ncheck data for analysis"+characteristics+"\n\n****");
 
         Users user = getUserByName(userDetails);
-        Optional<UnitList> unitList = unitListRepository.findByUserIdxAndUnitNameAndLogCreated(user.getUserIdx(), unit, logCreated);
-        if(unitList.isEmpty()) {
-            throw new CustomException(ErrorCode.UNIT_LIST_NOT_FOUND);
+        Optional<UnitList> unitList = Optional.of(new UnitList());
+        if(unit != null) {
+
+            unitList = unitListRepository.findByUserIdxAndUnitNameAndLogCreated(user.getUserIdx(), unit, logCreated);
+            if(unitList.isEmpty()) {
+                throw new CustomException(ErrorCode.UNIT_LIST_NOT_FOUND);
+            }
         }
 
         if(characteristics.equals("부대 행동")) {

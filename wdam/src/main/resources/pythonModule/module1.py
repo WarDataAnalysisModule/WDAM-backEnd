@@ -33,7 +33,7 @@ return: conn, cursor 객체
 def DatabaseConnect():
     conn = mysql.connector.connect(
 
-            )
+        )
     cursor=conn.cursor(buffered=True) # 커서 생성
     return conn, cursor
 
