@@ -257,7 +257,7 @@ public class AnalyzeService {
             checkUnitAttributes(user.getUserIdx(), unitList.get().getListIdx(), logCreated, false);
         }
         else if(characteristics.equals("부대 정보")) {
-            System.out.println("check data for부대 정보");
+            System.out.println("check data for 부대 정보");
             List<UnitList> unitLists = getUnitList(user.getUserIdx(), logCreated);
             for(UnitList unitFromUnitList : unitLists) {
                 checkUnitInit(user.getUserIdx(), unitFromUnitList.getListIdx(), logCreated);
