@@ -2,6 +2,7 @@ package com.back.wdam.analyze.service;
 
 import com.back.wdam.analyze.dto.AnalyzeResultDto;
 import com.back.wdam.entity.*;
+import com.back.wdam.enums.UpperUnit;
 import com.back.wdam.file.repository.*;
 import com.back.wdam.log.repository.LogRepository;
 import com.back.wdam.user.repository.UserRepository;
@@ -224,9 +225,10 @@ public class AnalyzeService {
 
     public void checkDataForAnalysis(UserDetails userDetails, String characteristics, String unit, LocalDateTime logCreated) {
 
-        System.out.println("****\n\ncheck data for analysis"+characteristics+"\n\n****");
-
+        System.out.println("****\n\ncheck data for analysis "+characteristics+"\n\n****");
         Users user = getUserByName(userDetails);
+        // System.out.println("userIdx: " + user.getUserIdx() + " characteristics: " + characteristics + " unit: " + unit + " logCreated: " + logCreated);
+
         Optional<UnitList> unitList = Optional.of(new UnitList());
         if(unit != null) {
 
@@ -265,7 +267,9 @@ public class AnalyzeService {
             System.out.println("check data for 부대 정보");
             List<UnitList> unitLists = getUnitList(user.getUserIdx(), logCreated);
             for(UnitList unitFromUnitList : unitLists) {
-                checkUnitInit(user.getUserIdx(), unitFromUnitList.getListIdx(), logCreated);
+                if(unitFromUnitList.getStatus().equals(UpperUnit.UNIT)) {
+                    checkUnitInit(user.getUserIdx(), unitFromUnitList.getListIdx(), logCreated);
+                }
             }
         }
         else if(characteristics.equals("부대 상태 및 지원")) {
@@ -314,14 +318,15 @@ public class AnalyzeService {
     }
 
     private void checkUnitInit(Long userIdx, Long listIdx, LocalDateTime createdAt) {
-        Optional<List<UnitInit>> unitInit = initRepository.findAllByUserIdxAndListIdx(userIdx, listIdx, createdAt);
-        if(unitInit.isEmpty() || unitInit.get().isEmpty())
+        //System.out.println("userIdx: " + userIdx + " listIdx: " + listIdx + " createdAt: " + createdAt);
+        Optional<UnitInit> unitInit = initRepository.findByUserIdxAndListIdx(userIdx, listIdx, createdAt);
+        if(unitInit == null || unitInit.isEmpty())
             throw new CustomException(ErrorCode.UNIT_INIT_NOT_FOUND);
     }
 
     private boolean checkUnitAttributes(Long userIdx, Long listIdx, LocalDateTime createdAt, boolean isAll) {
-        Optional<List<UnitAttributes>> unitAttributes = unitRepository.findAllByUserIdxAndListIdx(userIdx, listIdx, createdAt);
         System.out.println("userIdx: " + userIdx + " listIdx: " + listIdx + " createdAt: " + createdAt + " isAll: " + isAll);
+        Optional<List<UnitAttributes>> unitAttributes = unitRepository.findAllByUserIdxAndListIdx(userIdx, listIdx, createdAt);
         if (unitAttributes.isEmpty() || unitAttributes.get().isEmpty()) {
             if (!isAll) {
                 throw new CustomException(ErrorCode.UNIT_ATTRIBUTES_NOT_FOUND);
@@ -341,7 +346,7 @@ public class AnalyzeService {
     private List<UnitList> getUnitList(Long userIdx, LocalDateTime createdAt) {
         List<UnitList> unitLists = new ArrayList<>();
         unitLists = unitListRepository.findAllByUserIdxAndLogCreated(userIdx, createdAt).get();
-        if(unitLists == null || !unitLists.isEmpty()) {
+        if(unitLists == null || unitLists.isEmpty()) {
             throw new CustomException(ErrorCode.UNIT_LIST_NOT_FOUND);
         }
         return unitLists;

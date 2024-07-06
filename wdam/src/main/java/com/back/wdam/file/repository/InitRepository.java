@@ -17,4 +17,7 @@ public interface InitRepository extends JpaRepository<UnitInit, Long> {
 
     @Query("SELECT i FROM UnitInit i WHERE i.users.userIdx = :userIdx AND i.unitList.listIdx = :listIdx AND i.createdAt = :createdAt")
     Optional<List<UnitInit>> findAllByUserIdxAndListIdx(@Param("userIdx") Long userIdx, @Param("listIdx") Long listIdx, @Param("createdAt") LocalDateTime createdAt);
+
+    @Query("SELECT i FROM UnitInit i WHERE i.users.userIdx = :userIdx AND i.unitList.listIdx = :listIdx AND i.createdAt = :createdAt")
+    Optional<UnitInit> findByUserIdxAndListIdx(@Param("userIdx") Long userIdx, @Param("listIdx") Long listIdx, @Param("createdAt") LocalDateTime createdAt);
 }

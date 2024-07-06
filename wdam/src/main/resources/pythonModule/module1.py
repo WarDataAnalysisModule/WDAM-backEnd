@@ -569,13 +569,13 @@ if __name__ == "__main__":
     else:
         name = None
 
-    id = FindID(name, user_idx, log_created, cursor)
+    print("Temp File Path:", temp_file_path)
+    print("User ID:", user_idx)
+    print("Log Created:", log_created)
+    print("Characteristic:", characteristic)
+    print("Name:", name)
 
-#     print("Temp File Path:", temp_file_path)
-#     print("User ID:", user_idx)
-#     print("Log Created:", log_created)
-#     print("Characteristic:", characteristic)
-#     print("Name:", name)
+    id = FindID(name, user_idx, log_created, cursor)
 
     # ChatGPT Connect
     os.environ.get('OPENAI_API_KEY') is None

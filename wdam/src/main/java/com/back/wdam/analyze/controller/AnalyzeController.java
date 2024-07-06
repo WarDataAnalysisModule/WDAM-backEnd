@@ -25,6 +25,7 @@ public class AnalyzeController {
             @RequestParam("characteristics") String characteristics,
             @RequestParam("unit") String unit,
             @RequestParam("logCreated") LocalDateTime logCreated) {
+        unit = null;
         analyzeService.checkDataForAnalysis(userDetails, characteristics, unit, logCreated);
         return ResponseEntity.ok(ApiResponse.success(analyzeService.sendAnalyzeDataToModule(userDetails, characteristics, unit, logCreated)));
     }
