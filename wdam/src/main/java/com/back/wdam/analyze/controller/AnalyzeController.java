@@ -1,7 +1,9 @@
 package com.back.wdam.analyze.controller;
 
 import com.back.wdam.analyze.dto.AnalyzeResultDto;
+import com.back.wdam.analyze.dto.SendInfoDto;
 import com.back.wdam.analyze.service.AnalyzeService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import com.back.wdam.util.ApiResponse;
@@ -22,12 +24,9 @@ public class AnalyzeController {
     @PostMapping("")
     ResponseEntity<ApiResponse<Boolean>> sendAnalyzeDataToModule(
             @AuthenticationPrincipal UserDetails userDetails,
-            @RequestParam("characteristics") String characteristics,
-            @RequestParam("unit") String unit,
-            @RequestParam("logCreated") LocalDateTime logCreated) {
-        unit = null;
-        analyzeService.checkDataForAnalysis(userDetails, characteristics, unit, logCreated);
-        return ResponseEntity.ok(ApiResponse.success(analyzeService.sendAnalyzeDataToModule(userDetails, characteristics, unit, logCreated)));
+            @Valid @RequestBody SendInfoDto sendInfoDto) {
+        analyzeService.checkDataForAnalysis(userDetails, sendInfoDto.getCharacteristics(), sendInfoDto.getUnit(), sendInfoDto.getLogCreated());
+        return ResponseEntity.ok(ApiResponse.success(analyzeService.sendAnalyzeDataToModule(userDetails, sendInfoDto.getCharacteristics(), sendInfoDto.getUnit(), sendInfoDto.getLogCreated())));
     }
 
     @PostMapping("/result")

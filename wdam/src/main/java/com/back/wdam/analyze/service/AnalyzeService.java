@@ -311,7 +311,7 @@ public class AnalyzeService {
 
     private void checkUnitBehavior(Long userIdx, Long listIdx, LocalDateTime createdAt) {
         Optional<List<UnitBehavior>> behavior = behaviorRepository.findAllByUserIdxAndListIdxAndSimulationTime(userIdx, listIdx, createdAt);
-        //System.out.println("userIdx: " + userIdx + " listIdx: " + listIdx + " createdAt: " + createdAt);
+        System.out.println("userIdx: " + userIdx + " listIdx: " + listIdx + " createdAt: " + createdAt);
         if(behavior.isEmpty() || behavior.get().isEmpty()) {
             throw new CustomException(ErrorCode.BEHAVIOR_NOT_FOUND);
         }
