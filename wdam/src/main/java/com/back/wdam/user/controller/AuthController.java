@@ -49,12 +49,14 @@ public class AuthController {
         httpHeaders.set("refreshToken",token.getRefreshToken());
         //cookie에 refresh token 저장
         ResponseCookie responseCookie=ResponseCookie.from("refreshToken", token.getRefreshToken())
-                .httpOnly(true) // 쿠키 탈취 방지
-                .secure(true)   // https 요청으로만 쿠키 주고받기 가능
-                .domain("localhost")    // 특정 도메인에서만 사용, aws 시 수정
-                //.domain("ec2-3-36-242-36.ap-northeast-2.compute.amazonaws.com")
+                .httpOnly(true) // 쿠키 탈취 방지 -> 클라이언트(프론트)에서 이용 불가, 지워야함
+//                .secure(true)   // https 요청으로만 쿠키 주고받기 가능 -> 우리의 ec2는 http, 지워야함
+                .secure(false)
+//                .domain("localhost")    // 특정 도메인에서만 사용, aws 시 수정
+                .domain("ec2-3-36-242-36.ap-northeast-2.compute.amazonaws.com")
                 .maxAge(Duration.ofDays(7)) //쿠키 만료기간 7일
-                .sameSite("None") // 크로스 사이트 요청에서 쿠키를 허용
+                .path("/") // 모든 경로에서 쿠키 유효
+                .sameSite("Lax")
                 .build();
         apiResponse.setData(token);
         return ResponseEntity.ok()
@@ -74,11 +76,13 @@ public class AuthController {
         httpHeaders.set("refreshToken",token.getRefreshToken());
         ResponseCookie responseCookie=ResponseCookie.from("refreshToken", token.getRefreshToken())
                 .httpOnly(true) // 쿠키 탈취 방지
-                .secure(true)   // https 요청으로만 쿠키 주고받기 가능
-                .domain("localhost")    // 특정 도메인에서만 사용, aws 시 수정
-                //.domain("ec2-3-36-242-36.ap-northeast-2.compute.amazonaws.com")
+//                .secure(true)   // https 요청으로만 쿠키 주고받기 가능
+//                .domain("localhost")    // 특정 도메인에서만 사용, aws 시 수정
+                .domain("ec2-3-36-242-36.ap-northeast-2.compute.amazonaws.com")
                 .maxAge(Duration.ofDays(7)) //쿠키 만료기간 7일
-                .sameSite("None") // 크로스 사이트 요청에서 쿠키를 허용
+                .path("/")
+                .secure(false)
+                .sameSite("Lax")
                 .build();
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, responseCookie.toString())
