@@ -48,3 +48,4 @@ result.txt
 preprocessedData.txt
 img_url.txt
 src/main/resources/pythonModule/std_config.txt
+*.png

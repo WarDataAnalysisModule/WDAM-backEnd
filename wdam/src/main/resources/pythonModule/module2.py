@@ -120,7 +120,6 @@ def CreateMessage(characteristic, preprocessed_data, name, std_config_path):
             {"role": "user", "content": "데이터를 분석하여 해당 부대에서 바로 이전 데이터와 비교해서 power가 가장 많이 줄어든 시간대와 행동이름을 알려주고 \
              부대의 주요 BehaviorName의 종류와 해당 BehaviorName이 포함된 데이터만 비율을 알려주세요.\
              예시와 같이 제목, 두괄식 문장, 문장형식을 이용하여 html으로 표현해주세요.\
-             그리고 SimulationTime과 Power를 가지고 그래프를 그릴 코드를 따로 작성해 주세요.\
              예시: \
              <body> \
                 <h1>청군 4중대-2기관총분대 손실 보고</h1> \
@@ -214,7 +213,7 @@ param1: 전처리 데이터와 저장할 이미지 파일 명
 """
 def CreateImage(characteristic, preprocessed_data, img_name):
     messages = []
-    if characteristic == "부대 이동 속도/위치 변화":
+    if characteristic == "부대 이동 속도 / 위치 변화":
         messages = [
             {"role": "system", "content": "당신은 목적에 맞는 파이썬 코드를 작성해야 합니다."},
             {"role": "user", "content":
@@ -301,18 +300,19 @@ if __name__ == "__main__":
             file.write(result)
     print(f"Data written to {output_file_path}")
 
-    print(result)
+    # print(result)
 
     # 시각 자료 생성
     img_name="" # 시각 자료 파일명
-    if characteristic=="부대 이동 속도/위치 변화" or characteristic=="부대의 피해 상황":
+    img_success=0 # 이미지 생성 여부
+    if characteristic=="부대 이동 속도 / 위치 변화" or characteristic=="부대의 피해 상황":
 
         # 파일명 중복을 피하기 위해 생성 시간으로 파일명 저장
         from datetime import datetime
         img_name=str(datetime.now())+".png"
         img_name=img_name.replace(":","_")
         # 그래프 그리는 코드 생성
-        messages=CreateImage(characteristic, preprocessed_data, name, img_name)
+        messages=CreateImage(characteristic, preprocessed_data, img_name)
         code=AnaylizeData(openai, messages)
         code = code.replace("```python", " ").replace("```", " ")
 
@@ -320,6 +320,7 @@ if __name__ == "__main__":
             # 코드 실행
             exec(code)
             print("python module is making graph for ", characteristic)
+            img_success=1 # 이미지 생성 완료
         except Exception as e:
             # 코드 실행 실패 시 이미지 파일명 초기화
             img_name=""
@@ -327,32 +328,35 @@ if __name__ == "__main__":
     else: # 다른 특성인 경우 이미지 파일 x
         img_name=""
 
-    import boto3
-    # 실행 시 키 입력
-    AWS_ACCESS_KEY_ID=""
-    AWS_SECRET_ACCESS_KEY = ""
-    AWS_DEFAULT_REGION = ""
-
-    client = boto3.client('s3',
-                      aws_access_key_id=AWS_ACCESS_KEY_ID,
-                      aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
-                      region_name=AWS_DEFAULT_REGION
-                      )
-
-    bucket = ''           #버켓 주소, 실행 시 입력
-    key = img_name # s3에 저장될 이름
-
-    # s3 버킷에 이미지 업로드
-    client.upload_file(
-        img_name, bucket, key,
-        ExtraArgs={'ContentType': 'image/png'}  # Content-Type 설정
-    )
-
     url="" # s3에 업로드된 파일에 접근할 수 있는 경로
-    if img_name!="": # 시각 자료를 성공적으로 생성한 경우 url 생성
-        url="실행 시 버킷 url 입력"+img_name
-    print("url: ",url)
+    if img_success==1:   # 이미지 생성된 경우
+        import boto3
+        # 실행 시 키 입력
+        AWS_ACCESS_KEY_ID=""
+        AWS_SECRET_ACCESS_KEY = ""
+        AWS_DEFAULT_REGION = ""
+
+        client = boto3.client('s3',
+                          aws_access_key_id=AWS_ACCESS_KEY_ID,
+                          aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
+                          region_name=AWS_DEFAULT_REGION
+                          )
+
+        bucket = ''           #버켓 주소, 실행 시 입력
+        key = img_name # s3에 저장될 이름
+
+        # s3 버킷에 이미지 업로드
+        client.upload_file(
+            img_name, bucket, key,
+            ExtraArgs={'ContentType': 'image/png'}  # Content-Type 설정
+        )
+
+        if img_name!="": # 시각 자료를 성공적으로 생성한 경우 url 생성
+            url=""
+        print("url: ",url)
+
 
     # img_url에 시각자료 경로 저장
+    # 생성되지 않은 경우에는
     with open("img_url.txt","w",encoding="utf-8") as file:
         file.write(url)

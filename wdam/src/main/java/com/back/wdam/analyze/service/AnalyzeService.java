@@ -40,7 +40,6 @@ public class AnalyzeService {
 
         try {
             Users user = getUserByName(userDetails);
-
             ResultLog resultLog = logRepository.saveAndFlush(new ResultLog(user, unitName, analysisFeature, result, imgUrl, logCreated));
             return resultLog.getLogIdx();
         } catch (Exception e) {
@@ -215,7 +214,7 @@ public class AnalyzeService {
 
             Path imageFilePath = new File(System.getProperty("user.dir"), "img_url.txt").toPath();
             if (Files.exists(imageFilePath)) {
-                imgUrl = Files.readString(resultFilePath);
+                imgUrl = Files.readString(imageFilePath);
                 System.out.println("Content of img_url.txt:");
                 System.out.println(imgUrl);
             } else {
@@ -230,6 +229,7 @@ public class AnalyzeService {
             throw new CustomException(ErrorCode.RESULT_NOT_CREATED);
         }
 
+        System.out.println(imgUrl);
         saveNewAnalyzeResult(userDetails, unit, characteristics, result, imgUrl, logCreated);
         return true;
     }
@@ -254,7 +254,7 @@ public class AnalyzeService {
             checkUnitBehavior(user.getUserIdx(), unitList.get().getListIdx(), logCreated);
         }
         else if(characteristics.equals("부대 이동 속도 / 위치 변화")) {
-            System.out.println("check data for 부대 이동 속도/위치 변화");
+            System.out.println("check data for 부대 이동 속도 / 위치 변화");
             checkUnitAttributes(user.getUserIdx(), unitList.get().getListIdx(), logCreated, false);
         }
         else if(characteristics.equals("인원/장비 수량 변화")) {
