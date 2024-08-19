@@ -44,6 +44,7 @@ out/
 .vscode/
 
 ### anayze text file ###
-src/main/java/com/back/wdam/result.txt
-src/main/java/com/back/wdam/preprocessedData.txt
-src/main/java/com/back/wdam/std_config.txt
+result.txt
+preprocessedData.txt
+img_url.txt
+src/main/resources/pythonModule/std_config.txt
