@@ -34,6 +34,7 @@ public class LogService {
         Users user = getUserByName(userDetails);
 
         List<ResultLog> resultLogs = logRepository.findByUserIdAndLogCreated(user.getUserIdx(), logCreated);
+
         List<LogResultDto> logResultDtos = new ArrayList<>();
         if(!resultLogs.isEmpty()) {
             for (ResultLog resultLog : resultLogs) {
