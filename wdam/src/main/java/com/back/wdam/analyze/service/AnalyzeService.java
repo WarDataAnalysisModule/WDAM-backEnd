@@ -36,12 +36,11 @@ public class AnalyzeService {
     private final UnitRepository unitRepository;
     private final UpperRepository upperRepository;
 
-    public Long saveNewAnalyzeResult(UserDetails userDetails, String analysisFeature, String result, LocalDateTime logCreated) {
+    public Long saveNewAnalyzeResult(UserDetails userDetails, String unitName, String analysisFeature, String result, String imgUrl, LocalDateTime logCreated) {
 
         try {
             Users user = getUserByName(userDetails);
-
-            ResultLog resultLog = logRepository.saveAndFlush(new ResultLog(user, analysisFeature, result, logCreated));
+            ResultLog resultLog = logRepository.saveAndFlush(new ResultLog(user, unitName, analysisFeature, result, imgUrl, logCreated));
             return resultLog.getLogIdx();
         } catch (Exception e) {
             throw new CustomException(ErrorCode.DATA_SAVE_FAILURE);
@@ -64,12 +63,13 @@ public class AnalyzeService {
 
     public boolean sendAnalyzeDataToModule(UserDetails userDetails, String characteristics, String unit, LocalDateTime logCreated) {
 
-        String preprocessedData = "", result = "";
+        String preprocessedData = "", result = "", imgUrl = "";
         int exitCode;
         Users user = getUserByName(userDetails);
         String userIdx = String.valueOf(user.getUserIdx());
         String logCreatedInString = String.valueOf(logCreated);
 
+        // module 1 실행
         try {
 
             InputStream in = this.getClass().getClassLoader().getResourceAsStream("pythonModule/module1.py");
@@ -85,7 +85,7 @@ public class AnalyzeService {
 
             // ProcessBuilder를 사용하여 파이썬 파일 실행
             ProcessBuilder processBuilder_m1;
-            if(unit == null) {
+            if(unit == null) { // 모든 유닛에 대해 분석 진행
                 System.out.println("**unit x**");
                 processBuilder_m1 = new ProcessBuilder(
                         "python",
@@ -94,7 +94,7 @@ public class AnalyzeService {
                         logCreatedInString,
                         characteristics);
             }
-            else {
+            else { // 특정 유닛에 대해 분석 진행
                 System.out.println("**unit o**");
                 processBuilder_m1 = new ProcessBuilder(
                         "python",
@@ -120,7 +120,7 @@ public class AnalyzeService {
                 throw new IOException("Process exited with error code " + exitCode);
             }
 
-            // 파이썬 스크립트에서 생성한 파일 읽기
+            // 파이썬 스크립트에서 생성한 preprocessedData.txt 파일 읽기
             Path outputFilePath = new File(System.getProperty("user.dir"), "preprocessedData.txt").toPath();
             if (Files.exists(outputFilePath)) {
                 preprocessedData = Files.readString(outputFilePath);
@@ -138,6 +138,7 @@ public class AnalyzeService {
             throw new CustomException(ErrorCode.PREPROCESSED_DATA_NULL);
         }
 
+        // module 2 실행
         try {
 
             InputStream in = this.getClass().getClassLoader().getResourceAsStream("pythonModule/module2.py");
@@ -164,7 +165,7 @@ public class AnalyzeService {
 
             // ProcessBuilder를 사용하여 파이썬 파일 실행
             ProcessBuilder processBuilder_m2;
-            if(unit == null) {
+            if(unit == null) { // 모든 유닛에 대해 분석 진행
                 processBuilder_m2 = new ProcessBuilder(
                         "python",
                         tempFile.getAbsolutePath(),
@@ -174,7 +175,7 @@ public class AnalyzeService {
                         preprocessedData,
                         tempStdConfig.getAbsolutePath());
             }
-            else {
+            else { // 특정 유닛에 대해 분석 진행
                 processBuilder_m2 = new ProcessBuilder(
                         "python",
                         tempFile.getAbsolutePath(),
@@ -202,13 +203,22 @@ public class AnalyzeService {
             }
 
             // 파이썬 스크립트에서 생성한 파일 읽기
-            Path outputFilePath = new File(System.getProperty("user.dir"), "result.txt").toPath();
-            if (Files.exists(outputFilePath)) {
-                result = Files.readString(outputFilePath);
+            Path resultFilePath = new File(System.getProperty("user.dir"), "result.txt").toPath();
+            if (Files.exists(resultFilePath)) {
+                result = Files.readString(resultFilePath);
                 System.out.println("Content of result.txt:");
                 System.out.println(result);
             } else {
                 System.err.println("result.txt not found.");
+            }
+
+            Path imageFilePath = new File(System.getProperty("user.dir"), "img_url.txt").toPath();
+            if (Files.exists(imageFilePath)) {
+                imgUrl = Files.readString(imageFilePath);
+                System.out.println("Content of img_url.txt:");
+                System.out.println(imgUrl);
+            } else {
+                System.err.println("img_url.txt not found.");
             }
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
@@ -219,7 +229,8 @@ public class AnalyzeService {
             throw new CustomException(ErrorCode.RESULT_NOT_CREATED);
         }
 
-        saveNewAnalyzeResult(userDetails, characteristics, result, logCreated);
+        System.out.println(imgUrl);
+        saveNewAnalyzeResult(userDetails, unit, characteristics, result, imgUrl, logCreated);
         return true;
     }
 
@@ -243,7 +254,7 @@ public class AnalyzeService {
             checkUnitBehavior(user.getUserIdx(), unitList.get().getListIdx(), logCreated);
         }
         else if(characteristics.equals("부대 이동 속도 / 위치 변화")) {
-            System.out.println("check data for 부대 이동 속도/위치 변화");
+            System.out.println("check data for 부대 이동 속도 / 위치 변화");
             checkUnitAttributes(user.getUserIdx(), unitList.get().getListIdx(), logCreated, false);
         }
         else if(characteristics.equals("인원/장비 수량 변화")) {
