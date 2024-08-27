@@ -17,4 +17,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
     @Query("SELECT e FROM Event e WHERE e.users.userIdx = :userIdx AND e.createdAt = :createdAt AND (e.sourceUnit.listIdx = :listIdx OR e.targetUnit.listIdx = :listIdx)")
     Optional<List<Event>> findAllByUserIdxAndListIdx(@Param("userIdx") Long userIdx, @Param("listIdx") Long listIdx, @Param("createdAt") LocalDateTime createdAt);
+
+    @Query("SELECT e FROM Event e WHERE e.users.userIdx = :userIdx AND e.createdAt = :createdAt")
+    List<Event> findAllByUserIdxAndCreatedAt(@Param("userIdx") Long userIdx, @Param("createdAt") LocalDateTime createdAt);
 }

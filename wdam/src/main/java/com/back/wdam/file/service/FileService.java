@@ -29,6 +29,10 @@ public class FileService {
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
 
+    public boolean upperCheck(Long id, Long userIdx, LocalDateTime simulationTime){
+        return !upperRepository.findAllByUserIdxAndCreatedAt(id, userIdx, simulationTime).isEmpty();
+    }
+
 
     public void upperSave(Long id, UpperDto upperDto, UserDetails userDetails, LocalDateTime dateTime){
 
@@ -55,7 +59,11 @@ public class FileService {
         }
     }
 
-    public void unnitSave(Long id, UnitDto unitDto, UserDetails userDetails, LocalDateTime dateTime){
+    public boolean unitCheck(Long id, Long userIdx, LocalDateTime simulationTime){
+        return !unitRepository.findAllByUserIdxAndCreatedAt(id, userIdx, simulationTime).isEmpty();
+    }
+
+    public void unitSave(Long id, UnitDto unitDto, UserDetails userDetails, LocalDateTime dateTime){
         Long userIdx = userRepository.findByUserName(userDetails.getUsername()).get().getUserIdx();
         Optional<UnitList> unitList = unitListRepository.findByUnitId(id, userIdx, dateTime);
 
@@ -78,6 +86,10 @@ public class FileService {
             }
             unitRepository.saveAndFlush(new UnitAttributes(unitList.get(), unitDto));
         }
+    }
+
+    public boolean initCheck(Long userIdx, LocalDateTime simulationTime){
+        return !initRepository.findAllByUserIdxAndCreatedAt(userIdx, simulationTime).isEmpty();
     }
 
     public void initSave(Long id, InitDto initDto, UserDetails userDetails, LocalDateTime dateTime){
@@ -104,6 +116,10 @@ public class FileService {
         }
     }
 
+    public boolean behaviorCheck(Long userIdx, LocalDateTime simulationTime){
+        return !behaviorRepository.findAllByUserIdxAndCreatedAt(userIdx, simulationTime).isEmpty();
+    }
+
     public void behaviorSave(Long id, BehaviorDto behaviorDto, UserDetails userDetails, LocalDateTime dateTime){
         Long userIdx = userRepository.findByUserName(userDetails.getUsername()).get().getUserIdx();
         Optional<UnitList> unitList = unitListRepository.findByUnitId(id, userIdx, dateTime);
@@ -122,6 +138,10 @@ public class FileService {
             behaviorRepository.saveAndFlush(new UnitBehavior(unitList.get(), behaviorDto));
         }
         //behaviorRepository.saveAndFlush(new UnitBehavior(unitList.get(), behaviorDto));
+    }
+
+    public boolean eventCheck(Long userIdx, LocalDateTime simulationTime){
+        return !eventRepository.findAllByUserIdxAndCreatedAt(userIdx, simulationTime).isEmpty();
     }
 
     public void eventSave(Long source, Long target, EventDto eventDto, UserDetails userDetails, LocalDateTime dateTime){

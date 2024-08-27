@@ -1,5 +1,6 @@
 package com.back.wdam.file.repository;
 
+import com.back.wdam.entity.UnitAttributes;
 import com.back.wdam.entity.UnitBehavior;
 import com.back.wdam.entity.Users;
 import jakarta.transaction.Transactional;
@@ -23,4 +24,7 @@ public interface BehaviorRepository extends JpaRepository<UnitBehavior, Long> {
 
     @Query("SELECT b FROM UnitBehavior b WHERE b.users.userIdx = :userIdx AND b.unitList.listIdx = :listIdx AND b.createdAt = :createdAt")
     Optional<List<UnitBehavior>> findAllByUserIdxAndListIdxAndSimulationTime(@Param("userIdx") Long userIdx, @Param("listIdx") Long listIdx, @Param("createdAt") LocalDateTime createdAt);
+
+    @Query("SELECT b FROM UnitBehavior b WHERE b.users.userIdx = :userIdx AND b.createdAt = :createdAt")
+    List<UnitBehavior> findAllByUserIdxAndCreatedAt(@Param("userIdx") Long userIdx, @Param("createdAt") LocalDateTime createdAt);
 }
