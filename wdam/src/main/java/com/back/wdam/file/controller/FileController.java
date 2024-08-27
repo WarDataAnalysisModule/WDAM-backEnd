@@ -2,6 +2,7 @@ package com.back.wdam.file.controller;
 
 import com.back.wdam.file.dto.*;
 import com.back.wdam.file.service.FileService;
+import com.back.wdam.user.repository.UserRepository;
 import com.back.wdam.util.ApiResponse;
 import io.micrometer.common.lang.Nullable;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ import java.util.regex.Pattern;
 public class FileController {
 
     private final FileService fileService;
+    private final UserRepository userRepository;
 
     //이 세 파일의 id는 단위부대 id
     //단위부대init_20230116174254.csv
@@ -48,7 +50,6 @@ public class FileController {
 
         Set<LocalDateTime> simulationTimes = new HashSet<>();
 
-
         if(uppers != null) {
             for(MultipartFile upper: uppers){
 
@@ -63,6 +64,8 @@ public class FileController {
                     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
                     LocalDateTime dateTime = LocalDateTime.parse(dateTimeString, formatter);
                     simulationTimes.add(dateTime);
+
+                    if(fileService.upperCheck(unitId, userRepository.findByUserName(userDetails.getUsername()).get().getUserIdx(), dateTime)) continue;
 
                     try {
                         br = new BufferedReader(new InputStreamReader(upper.getInputStream(), "EUC-KR"));
@@ -124,6 +127,8 @@ public class FileController {
                     LocalDateTime dateTime = LocalDateTime.parse(dateTimeString, formatter);
                     simulationTimes.add(dateTime);
 
+                    if(fileService.unitCheck(unitId, userRepository.findByUserName(userDetails.getUsername()).get().getUserIdx(), dateTime)) continue;
+
                     try {
                         br = new BufferedReader(new InputStreamReader(unit.getInputStream(), "EUC-KR"));
 
@@ -164,7 +169,7 @@ public class FileController {
                                         damageState, power, powerDistribution, detectedEntityId, detectedEntityDistance,
                                         echelon, mos, dateTime);
 
-                                fileService.unnitSave(unitId, unitDto, userDetails, dateTime);
+                                fileService.unitSave(unitId, unitDto, userDetails, dateTime);
 
                             } catch (NumberFormatException e) {
                                 // 정수로 변환할 수 없는 경우 예외 처리
@@ -181,7 +186,6 @@ public class FileController {
             }
         }
 
-
         if(inits != null) { //단위부대init_20230116174254.csv
             for(MultipartFile init: inits){
                 String name = init.getOriginalFilename();
@@ -190,6 +194,8 @@ public class FileController {
                 DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
                 LocalDateTime dateTime = LocalDateTime.parse(date, dateTimeFormatter);
                 simulationTimes.add(dateTime);
+
+                if(fileService.initCheck(userRepository.findByUserName(userDetails.getUsername()).get().getUserIdx(), dateTime)) continue;
 
                 try {
                     br = new BufferedReader(new InputStreamReader(init.getInputStream(), "EUC-KR"));
@@ -245,6 +251,8 @@ public class FileController {
                 LocalDateTime dateTime = LocalDateTime.parse(datePart, formatter);
                 simulationTimes.add(dateTime);
 
+                if(fileService.behaviorCheck(userRepository.findByUserName(userDetails.getUsername()).get().getUserIdx(), dateTime)) continue;
+
                 try {
                     br = new BufferedReader(new InputStreamReader(behavior.getInputStream(), "EUC-KR"));
 
@@ -297,6 +305,8 @@ public class FileController {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
                 LocalDateTime dateTime = LocalDateTime.parse(datePart, formatter);
                 simulationTimes.add(dateTime);
+
+                if(fileService.eventCheck(userRepository.findByUserName(userDetails.getUsername()).get().getUserIdx(), dateTime)) continue;
 
                 try {
                     br = new BufferedReader(new InputStreamReader(event.getInputStream(), "EUC-KR"));

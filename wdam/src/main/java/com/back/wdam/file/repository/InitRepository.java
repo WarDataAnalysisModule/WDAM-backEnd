@@ -1,5 +1,6 @@
 package com.back.wdam.file.repository;
 
+import com.back.wdam.entity.UnitAttributes;
 import com.back.wdam.entity.UnitInit;
 import com.back.wdam.entity.Users;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -20,4 +21,7 @@ public interface InitRepository extends JpaRepository<UnitInit, Long> {
 
     @Query("SELECT i FROM UnitInit i WHERE i.users.userIdx = :userIdx AND i.unitList.listIdx = :listIdx AND i.createdAt = :createdAt")
     Optional<UnitInit> findByUserIdxAndListIdx(@Param("userIdx") Long userIdx, @Param("listIdx") Long listIdx, @Param("createdAt") LocalDateTime createdAt);
+
+    @Query("SELECT i FROM UnitInit i WHERE i.users.userIdx = :userIdx AND i.createdAt = :createdAt")
+    List<UnitInit> findAllByUserIdxAndCreatedAt(@Param("userIdx") Long userIdx, @Param("createdAt") LocalDateTime createdAt);
 }
