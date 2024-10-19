@@ -12,12 +12,16 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @ToString
-@Table(name = "UnitList")
+@Table(name = "Unit_list")
 public class UnitList {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "listIdx")
+    @Column(name = "list_idx")
     private Long listIdx;
+
+    @ManyToOne
+    @JoinColumn(name = "user_idx")
+    private Users users;
 
     private Long unitId;
 
@@ -25,4 +29,6 @@ public class UnitList {
 
     @Enumerated(EnumType.STRING)
     private UpperUnit status;
+
+    private LocalDateTime simulationTime;
 }

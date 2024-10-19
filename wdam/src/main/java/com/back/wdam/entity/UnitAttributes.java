@@ -1,6 +1,6 @@
 package com.back.wdam.entity;
 
-import com.back.wdam.module.dto.UnitDto;
+import com.back.wdam.file.dto.UnitDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,16 +12,20 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @ToString
-@Table(name = "UnitAttributes")
+@Table(name = "unit_attributes")
 public class UnitAttributes {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "attributesIdx")
+    @Column(name = "attributes_idx")
     private Long attributesIdx;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "unitId", referencedColumnName = "unitId") // unitId를 외래 키로 사용
+    @ManyToOne
+    @JoinColumn(name = "user_idx")
+    private Users users;
+
+    @ManyToOne
+    @JoinColumn(name = "list_idx")
     private UnitList unitList;
 
     private Long simulationTime;
@@ -36,7 +40,7 @@ public class UnitAttributes {
 
     private Double positionLat;
 
-    private Double positionOn;
+    private Double positionLon;
 
     private Double positionAlt;
 
@@ -46,7 +50,7 @@ public class UnitAttributes {
 
     private String damageState;
 
-    private Integer power;
+    private Double power;
 
     private String powerDistribution;
 
@@ -61,6 +65,7 @@ public class UnitAttributes {
     private LocalDateTime createdAt;
 
     public UnitAttributes(UnitList newUnit, UnitDto unitDto) {
+        this.users = newUnit.getUsers();
         this.unitList = newUnit;
         this.simulationTime = unitDto.getSimulationTime();
         this.unitName = unitDto.getUnitName();
@@ -68,7 +73,7 @@ public class UnitAttributes {
         this.forceIdentifier = unitDto.getForceIdentifier();
         this.entitySymbol = unitDto.getEntitySymbol();
         this.positionLat = unitDto.getPositionLat();
-        this.positionOn = unitDto.getPositionOn();
+        this.positionLon = unitDto.getPositionOn();
         this.positionAlt = unitDto.getPositionAlt();
         this.orientation = unitDto.getOrientation();
         this.speed = unitDto.getSpeed();
@@ -80,5 +85,9 @@ public class UnitAttributes {
         this.echelon = unitDto.getEchelon();
         this.mos = unitDto.getMos();
         this.createdAt = unitDto.getCreatedAt();
+    }
+
+    public UnitAttributes() {
+
     }
 }

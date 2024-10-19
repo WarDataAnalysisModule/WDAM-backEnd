@@ -5,6 +5,10 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
+### Project Files ###
+*.properties
+*.yml
+
 ### STS ###
 .apt_generated
 .classpath
@@ -18,7 +22,10 @@ bin/
 !**/src/test/**/bin/
 
 ### IntelliJ IDEA ###
-.idea
+application.properties
+application-real.properties
+.idea/
+*.idea
 *.iws
 *.iml
 *.ipr
@@ -35,3 +42,10 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### anayze text file ###
+result.txt
+preprocessedData.txt
+img_url.txt
+src/main/resources/pythonModule/std_config.txt
+*.png
